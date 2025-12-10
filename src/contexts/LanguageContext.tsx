@@ -15,8 +15,28 @@ const translations: Record<Language, Record<string, string>> = {
   sv: {
     // Navigation
     'nav.home': 'Hem',
+    'nav.about': 'Om LAJO',
     'nav.pricing': 'Priser',
     'nav.booking': 'Boka',
+    
+    // About page
+    'about.label': 'Om Mig',
+    'about.title': 'LAJO',
+    'about.bio1': 'Med över 10 års erfarenhet inom musikproduktion har jag haft förmånen att arbeta med allt från spirande talanger till etablerade artister. Min resa började i ett litet sovrum med en dator och en dröm – idag driver jag en professionell studio på den svenska landsbygden.',
+    'about.bio2': 'Min filosofi är enkel: varje låt förtjänar att behandlas som ett konstverk. Jag tror på att lyssna först, förstå artistens vision, och sedan använda min tekniska kunskap för att förstärka det som redan finns där. Det handlar inte om att sätta min prägel på musiken – det handlar om att hjälpa din musik att nå sin fulla potential.',
+    'about.bio3': 'När jag inte är i studion hittar du mig förmodligen ute i naturen, jagandes inspiration i de svenska skogarna och sjöarna som omger min studio. Den tystnaden och friden är en stor del av varför jag valde att bygga min studio här – och varför så många artister hittar ett nytt kreativt flow när de besöker.',
+    'about.credentials.title': 'Erfarenhet & Meriter',
+    'about.credential1': '500+ mixade och mastrade låtar',
+    'about.credential2': 'Arbetat med artister från 15+ länder',
+    'about.credential3': 'Samarbeten med major och indie-labels',
+    'about.credential4': 'Certifierad i Pro Tools & Logic Pro',
+    'about.philosophy.title': 'Min Filosofi',
+    'about.philosophy.text': 'Jag tror att den bästa produktionen är den som tjänar låten, inte tvärtom. Min roll är att vara en förlängning av din kreativa vision – att översätta känslan du har i huvudet till något som världen kan höra och känna.',
+    
+    // Portfolio
+    'portfolio.title': 'Lyssna på Tidigare Arbeten',
+    'portfolio.subtitle': 'Ett urval av projekt jag har arbetat med genom åren.',
+    'portfolio.note': 'Dessa är exempel på tidigare produktioner. Kontakta mig för fler referenser.',
     
     // Hero
     'hero.title': 'Professionell Mixning & Mastring för Artister som Menar Allvar',
@@ -116,8 +136,28 @@ const translations: Record<Language, Record<string, string>> = {
   en: {
     // Navigation
     'nav.home': 'Home',
+    'nav.about': 'About',
     'nav.pricing': 'Pricing',
     'nav.booking': 'Book',
+    
+    // About page
+    'about.label': 'About Me',
+    'about.title': 'LAJO',
+    'about.bio1': 'With over 10 years of experience in music production, I\'ve had the privilege of working with everyone from emerging talents to established artists. My journey started in a small bedroom with a computer and a dream – today I run a professional studio in the Swedish countryside.',
+    'about.bio2': 'My philosophy is simple: every song deserves to be treated as a work of art. I believe in listening first, understanding the artist\'s vision, and then using my technical knowledge to enhance what\'s already there. It\'s not about putting my stamp on the music – it\'s about helping your music reach its full potential.',
+    'about.bio3': 'When I\'m not in the studio, you\'ll probably find me out in nature, chasing inspiration in the Swedish forests and lakes surrounding my studio. That silence and peace is a big part of why I chose to build my studio here – and why so many artists find a new creative flow when they visit.',
+    'about.credentials.title': 'Experience & Credentials',
+    'about.credential1': '500+ songs mixed and mastered',
+    'about.credential2': 'Worked with artists from 15+ countries',
+    'about.credential3': 'Collaborations with major and indie labels',
+    'about.credential4': 'Certified in Pro Tools & Logic Pro',
+    'about.philosophy.title': 'My Philosophy',
+    'about.philosophy.text': 'I believe that the best production is one that serves the song, not the other way around. My role is to be an extension of your creative vision – to translate the feeling in your head into something the world can hear and feel.',
+    
+    // Portfolio
+    'portfolio.title': 'Listen to Previous Work',
+    'portfolio.subtitle': 'A selection of projects I\'ve worked on over the years.',
+    'portfolio.note': 'These are examples of previous productions. Contact me for more references.',
     
     // Hero
     'hero.title': 'Premium Mixing & Mastering for Artists Who Take Their Sound Seriously',

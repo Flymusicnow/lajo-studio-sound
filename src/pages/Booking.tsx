@@ -12,11 +12,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { CheckCircle, ArrowLeft } from 'lucide-react';
+import { CheckCircle, ArrowLeft, Loader2 } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 const Booking = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const { toast } = useToast();
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     service: '',
     package: '',
@@ -37,11 +41,31 @@ const Booking = () => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Here you would typically send to backend
-    console.log('Booking submitted:', formData);
-    setIsSubmitted(true);
+    setIsLoading(true);
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('send-booking-email', {
+        body: { ...formData, language },
+      });
+
+      if (error) throw error;
+
+      console.log('Booking email sent:', data);
+      setIsSubmitted(true);
+    } catch (error: any) {
+      console.error('Error sending booking:', error);
+      toast({
+        title: language === 'sv' ? 'Något gick fel' : 'Something went wrong',
+        description: language === 'sv' 
+          ? 'Kunde inte skicka din förfrågan. Försök igen senare.'
+          : 'Could not send your request. Please try again later.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   if (isSubmitted) {
@@ -308,9 +332,17 @@ const Booking = () => {
               {/* Submit */}
               <Button 
                 type="submit"
+                disabled={isLoading}
                 className="w-full bg-primary text-primary-foreground hover:bg-primary/90 gold-glow py-6 font-sans tracking-wide"
               >
-                {t('booking.submit')}
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    {language === 'sv' ? 'Skickar...' : 'Sending...'}
+                  </>
+                ) : (
+                  t('booking.submit')
+                )}
               </Button>
             </div>
           </form>
