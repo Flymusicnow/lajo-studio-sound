@@ -10,39 +10,25 @@ const corsHeaders = {
 
 interface BookingRequest {
   service: string;
-  package: string;
-  songs: string;
-  tracks: string;
-  delivery: string;
-  recordingDate: string;
   name: string;
-  artistName: string;
   email: string;
   phone: string;
-  location: string;
-  musicLink: string;
   description: string;
   language: 'sv' | 'en';
 }
 
 const handler = async (req: Request): Promise<Response> => {
-  console.log("Booking email function called");
-  
-  // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
     const booking: BookingRequest = await req.json();
-    console.log("Received booking:", { name: booking.name, email: booking.email, service: booking.service });
-
     const isSv = booking.language === 'sv';
 
-    // Email to the customer
     const customerSubject = isSv 
-      ? 'Bekräftelse: Din bokningsförfrågan till LAJO Studio'
-      : 'Confirmation: Your booking request to LAJO Studio';
+      ? 'Bekräftelse: Din bokningsförfrågan till TOPLINER PRODUCTION'
+      : 'Confirmation: Your booking request to TOPLINER PRODUCTION';
 
     const customerHtml = `
       <!DOCTYPE html>
@@ -53,7 +39,7 @@ const handler = async (req: Request): Promise<Response> => {
           body { font-family: 'Georgia', serif; background: #0a0a0a; color: #f5f5f0; margin: 0; padding: 40px 20px; }
           .container { max-width: 600px; margin: 0 auto; }
           .header { text-align: center; margin-bottom: 40px; }
-          .logo { font-size: 32px; font-weight: 600; letter-spacing: 4px; color: #f5f5f0; }
+          .logo { font-size: 28px; font-weight: 700; letter-spacing: 4px; color: #f5f5f0; }
           .gold { color: #d4af37; }
           .divider { width: 60px; height: 1px; background: #d4af37; margin: 20px auto; }
           h1 { font-size: 24px; font-weight: 400; margin-bottom: 10px; }
@@ -68,7 +54,7 @@ const handler = async (req: Request): Promise<Response> => {
       <body>
         <div class="container">
           <div class="header">
-            <div class="logo">LAJO</div>
+            <div class="logo">TOPLINER</div>
             <div class="divider"></div>
           </div>
           
@@ -84,20 +70,16 @@ const handler = async (req: Request): Promise<Response> => {
               <span class="detail-label">${isSv ? 'Tjänst' : 'Service'}</span>
               <span class="detail-value">${booking.service}</span>
             </div>
+            ${booking.phone ? `
             <div class="detail-row">
-              <span class="detail-label">${isSv ? 'Paket' : 'Package'}</span>
-              <span class="detail-value">${booking.package}</span>
-            </div>
-            ${booking.songs ? `
-            <div class="detail-row">
-              <span class="detail-label">${isSv ? 'Antal låtar' : 'Number of songs'}</span>
-              <span class="detail-value">${booking.songs}</span>
+              <span class="detail-label">${isSv ? 'Telefon' : 'Phone'}</span>
+              <span class="detail-value">${booking.phone}</span>
             </div>
             ` : ''}
-            ${booking.artistName ? `
+            ${booking.description ? `
             <div class="detail-row">
-              <span class="detail-label">${isSv ? 'Artistnamn' : 'Artist name'}</span>
-              <span class="detail-value">${booking.artistName}</span>
+              <span class="detail-label">${isSv ? 'Beskrivning' : 'Description'}</span>
+              <span class="detail-value">${booking.description}</span>
             </div>
             ` : ''}
           </div>
@@ -108,39 +90,30 @@ const handler = async (req: Request): Promise<Response> => {
           }</p>
           
           <div class="footer">
-            <p>LAJO Studio</p>
-            <p style="color: #d4af37;">${isSv ? 'Professionell Mixning & Mastring' : 'Professional Mixing & Mastering'}</p>
+            <p>TOPLINER PRODUCTION</p>
+            <p style="color: #d4af37;">${isSv ? 'Professionell Studio & Musikproduktion' : 'Professional Studio & Music Production'}</p>
           </div>
         </div>
       </body>
       </html>
     `;
 
-    // Send customer confirmation email
     const customerEmail = await resend.emails.send({
-      from: "LAJO Studio <onboarding@resend.dev>",
+      from: "TOPLINER PRODUCTION <onboarding@resend.dev>",
       to: [booking.email],
       subject: customerSubject,
       html: customerHtml,
     });
 
-    console.log("Customer email sent:", customerEmail);
-
     return new Response(
       JSON.stringify({ success: true, customerEmail }),
-      {
-        status: 200,
-        headers: { "Content-Type": "application/json", ...corsHeaders },
-      }
+      { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
     );
   } catch (error: any) {
     console.error("Error in send-booking-email function:", error);
     return new Response(
       JSON.stringify({ error: error.message }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json", ...corsHeaders },
-      }
+      { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
     );
   }
 };
