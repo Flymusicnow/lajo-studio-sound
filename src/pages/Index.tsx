@@ -1,9 +1,9 @@
 import Layout from '@/components/Layout';
 import Hero from '@/components/Hero';
-import StudioIntro from '@/components/StudioIntro';
-import Services from '@/components/Services';
-import Portfolio from '@/components/Portfolio';
-import CTA from '@/components/CTA';
+import ThreeWays from '@/components/ThreeWays';
+import Process from '@/components/Process';
+import ForWho from '@/components/ForWho';
+import UrgencyCTA from '@/components/UrgencyCTA';
 import AnimatedSection from '@/components/AnimatedSection';
 
 const Index = () => {
@@ -11,16 +11,16 @@ const Index = () => {
     <Layout>
       <Hero />
       <AnimatedSection>
-        <StudioIntro />
+        <ThreeWays />
       </AnimatedSection>
       <AnimatedSection>
-        <Services />
+        <Process />
       </AnimatedSection>
       <AnimatedSection>
-        <Portfolio />
+        <ForWho />
       </AnimatedSection>
       <AnimatedSection>
-        <CTA />
+        <UrgencyCTA />
       </AnimatedSection>
     </Layout>
   );

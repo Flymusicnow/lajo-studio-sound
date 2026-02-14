@@ -9,13 +9,13 @@ const Footer = () => {
       <div className="container px-6">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           {/* Logo */}
-          <span className="text-xl font-serif font-semibold tracking-wider text-foreground">
-            LAJO
+          <span className="text-xl font-sans font-bold tracking-wider text-foreground">
+            TOPLINER
           </span>
           
           {/* Copyright */}
           <p className="text-sm text-muted-foreground font-sans">
-            © {currentYear} LAJO Studio. {t('footer.rights')}
+            © {currentYear} TOPLINER PRODUCTION. {t('footer.rights')}
           </p>
         </div>
       </div>

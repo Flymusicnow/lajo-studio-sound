@@ -7,10 +7,8 @@ const Hero = () => {
 
   return (
     <section className="relative min-h-screen flex items-center justify-center pt-20">
-      {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-charcoal-light opacity-50" />
       
-      {/* Subtle grid pattern */}
       <div 
         className="absolute inset-0 opacity-[0.02]"
         style={{
@@ -21,22 +19,18 @@ const Hero = () => {
 
       <div className="container relative z-10 px-6 py-20 md:py-32">
         <div className="max-w-4xl mx-auto text-center">
-          {/* Small label */}
           <p className="text-primary font-sans text-sm tracking-[0.3em] uppercase mb-6 fade-in">
-            LAJO Studio
+            TOPLINER PRODUCTION
           </p>
           
-          {/* Main title */}
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-semibold leading-tight mb-8 fade-in-delay">
             {t('hero.title')}
           </h1>
           
-          {/* Subtitle */}
           <p className="text-lg md:text-xl text-muted-foreground font-sans font-light max-w-2xl mx-auto mb-12 fade-in-delay-2">
             {t('hero.subtitle')}
           </p>
           
-          {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 fade-in-delay-2">
             <Button 
               asChild
@@ -51,13 +45,12 @@ const Hero = () => {
               size="lg"
               className="border-border text-foreground hover:bg-secondary hover:text-foreground px-8 py-6 text-base font-sans tracking-wide"
             >
-              <Link to="/pricing">{t('hero.cta.packages')}</Link>
+              <a href="#paket">{t('hero.cta.packages')}</a>
             </Button>
           </div>
         </div>
       </div>
 
-      {/* Scroll indicator */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 fade-in-delay-2">
         <div className="w-[1px] h-16 bg-gradient-to-b from-transparent via-muted-foreground/50 to-transparent" />
       </div>
