@@ -429,6 +429,22 @@ const translations: Record<Language, Record<string, string>> = {
     'bb.price.deposit': 'Deposit (50%)',
     'bb.price.remaining': 'Remaining',
 
+    // About
+    'about.label': 'About',
+    'about.title': 'Topliner Production',
+    'about.bio1': 'I run Topliner Production – a professional studio for artists, bands and choirs who want to take their music to the next level.',
+    'about.bio2': 'Every session is led by me as the responsible producer. This is not about renting a studio – it\'s about working with someone who cares about the result as much as you do.',
+    'about.bio3': 'My background spans commercial production, mixing and mastering. I work with artists who are serious about their music and want a clear creative direction.',
+    'about.what.title': 'What I do',
+    'about.what.1': 'Production – from idea to finished song',
+    'about.what.2': 'Mixing & mastering for release',
+    'about.what.3': 'Creative direction & arrangement',
+    'about.what.4': 'Sessions for artists, bands & choirs',
+    'about.philosophy.title': 'Quality, direction, taste',
+    'about.philosophy.text': 'I believe every project deserves a clear creative vision. Quality isn\'t just about sound – it\'s about direction, taste, and having the courage to make decisions that make the music better.',
+    'about.cta.title': 'Ready to start?',
+    'about.cta.book': 'Build your session',
+
     // Footer
     'footer.rights': 'All rights reserved.',
   },
