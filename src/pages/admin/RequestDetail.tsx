@@ -18,6 +18,7 @@ const RequestDetail = () => {
   const [note, setNote] = useState('');
   const [loading, setLoading] = useState(true);
   const [emailSending, setEmailSending] = useState('');
+  const [stripeLoading, setStripeLoading] = useState(false);
 
   const fetchRequest = async () => {
     const { data } = await supabase
