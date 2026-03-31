@@ -35,6 +35,7 @@ const App = () => (
               <Route path="/booking" element={<Booking />} />
               <Route path="/about" element={<About />} />
               <Route path="/upload/:bookingId" element={<FileUpload />} />
+              <Route path="/booking/success" element={<BookingSuccess />} />
               <Route path="/admin/login" element={<Login />} />
               <Route path="/admin" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
               <Route path="/admin/requests" element={<ProtectedRoute><Requests /></ProtectedRoute>} />
