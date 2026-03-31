@@ -8,95 +8,69 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-interface BookingRequest {
-  service: string;
-  name: string;
-  email: string;
-  phone: string;
-  description: string;
-  language: 'sv' | 'en';
-}
-
 const handler = async (req: Request): Promise<Response> => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const booking: BookingRequest = await req.json();
+    const booking = await req.json();
     const isSv = booking.language === 'sv';
 
-    const customerSubject = isSv 
-      ? 'Bekräftelse: Din bokningsförfrågan till TOPLINER PRODUCTION'
-      : 'Confirmation: Your booking request to TOPLINER PRODUCTION';
+    const renderLine = (label: string, value: string) =>
+      value ? `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #222"><span style="color:#666">${label}</span><span style="color:#f5f5f0">${value}</span></div>` : '';
 
-    const customerHtml = `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <meta charset="utf-8">
-        <style>
-          body { font-family: 'Georgia', serif; background: #0a0a0a; color: #f5f5f0; margin: 0; padding: 40px 20px; }
-          .container { max-width: 600px; margin: 0 auto; }
-          .header { text-align: center; margin-bottom: 40px; }
-          .logo { font-size: 28px; font-weight: 700; letter-spacing: 4px; color: #f5f5f0; }
-          .gold { color: #d4af37; }
-          .divider { width: 60px; height: 1px; background: #d4af37; margin: 20px auto; }
-          h1 { font-size: 24px; font-weight: 400; margin-bottom: 10px; }
-          p { line-height: 1.8; color: #999; font-size: 16px; }
-          .details { background: #111; padding: 30px; margin: 30px 0; border-left: 2px solid #d4af37; }
-          .detail-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #222; }
-          .detail-label { color: #666; }
-          .detail-value { color: #f5f5f0; }
-          .footer { text-align: center; margin-top: 40px; font-size: 14px; color: #666; }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <div class="header">
-            <div class="logo">TOPLINER</div>
-            <div class="divider"></div>
-          </div>
-          
-          <h1>${isSv ? 'Tack för din förfrågan,' : 'Thank you for your request,'} <span class="gold">${booking.name}</span></h1>
-          
-          <p>${isSv 
-            ? 'Vi har mottagit din bokningsförfrågan och återkommer inom kort med bekräftelse, pris och nästa steg.'
-            : 'We have received your booking request and will get back to you shortly with confirmation, pricing, and next steps.'
-          }</p>
-          
-          <div class="details">
-            <div class="detail-row">
-              <span class="detail-label">${isSv ? 'Tjänst' : 'Service'}</span>
-              <span class="detail-value">${booking.service}</span>
-            </div>
-            ${booking.phone ? `
-            <div class="detail-row">
-              <span class="detail-label">${isSv ? 'Telefon' : 'Phone'}</span>
-              <span class="detail-value">${booking.phone}</span>
-            </div>
-            ` : ''}
-            ${booking.description ? `
-            <div class="detail-row">
-              <span class="detail-label">${isSv ? 'Beskrivning' : 'Description'}</span>
-              <span class="detail-value">${booking.description}</span>
-            </div>
-            ` : ''}
-          </div>
-          
-          <p>${isSv 
-            ? 'Om du har några frågor, svara gärna på detta mail.'
-            : 'If you have any questions, feel free to reply to this email.'
-          }</p>
-          
-          <div class="footer">
-            <p>TOPLINER PRODUCTION</p>
-            <p style="color: #d4af37;">${isSv ? 'Professionell Studio & Musikproduktion' : 'Professional Studio & Music Production'}</p>
-          </div>
-        </div>
-      </body>
-      </html>
-    `;
+    const addOnLines = (booking.addOns || []).map((a: any) =>
+      renderLine(a.label, `${(a.price || 0).toLocaleString()} SEK`)
+    ).join('');
+
+    const masteringLine = booking.mastering?.type === 'per-track'
+      ? renderLine(isSv ? 'Mastering' : 'Mastering', `${booking.mastering.tracks} × ${booking.mastering.pricePerTrack?.toLocaleString()} SEK`)
+      : '';
+
+    const total = booking.totalPrice || 0;
+    const deposit = booking.depositAmount || 0;
+
+    const customerSubject = isSv
+      ? 'Bekräftelse: Din sessionförfrågan till TOPLINER PRODUCTION'
+      : 'Confirmation: Your session request to TOPLINER PRODUCTION';
+
+    const customerHtml = `<!DOCTYPE html><html><head><meta charset="utf-8"><style>
+      body{font-family:'Georgia',serif;background:#0a0a0a;color:#f5f5f0;margin:0;padding:40px 20px}
+      .c{max-width:600px;margin:0 auto}.hdr{text-align:center;margin-bottom:40px}
+      .logo{font-size:28px;font-weight:700;letter-spacing:4px;color:#f5f5f0}
+      .gold{color:#d4af37}.div{width:60px;height:1px;background:#d4af37;margin:20px auto}
+      h1{font-size:24px;font-weight:400;margin-bottom:10px}
+      p{line-height:1.8;color:#999;font-size:16px}
+      .det{background:#111;padding:30px;margin:30px 0;border-left:2px solid #d4af37}
+      .tot{text-align:center;margin:30px 0;padding:20px;border:1px solid #333}
+      .tot .amt{font-size:32px;color:#d4af37;font-weight:700}
+      .ftr{text-align:center;margin-top:40px;font-size:14px;color:#666}
+    </style></head><body><div class="c">
+      <div class="hdr"><div class="logo">TOPLINER</div><div class="div"></div></div>
+      <h1>${isSv ? 'Tack för din förfrågan,' : 'Thank you for your request,'} <span class="gold">${booking.name}</span></h1>
+      <p>${isSv ? 'Vi har mottagit din sessionförfrågan och återkommer inom kort.' : 'We have received your session request and will get back to you shortly.'}</p>
+      <div class="det">
+        ${renderLine(isSv ? 'Session' : 'Session', booking.session?.label || '')}
+        ${(booking.creativeTypes || []).length > 0 ? renderLine(isSv ? 'Skapar' : 'Creating', booking.creativeTypes.join(', ')) : ''}
+        ${addOnLines}
+        ${masteringLine}
+        ${renderLine(isSv ? 'Resultatpaket' : 'Result Package', booking.resultPackage?.label || '')}
+        ${booking.resultPackage?.price > 0 ? renderLine(isSv ? 'Paketpris' : 'Package price', `${booking.resultPackage.price.toLocaleString()} SEK`) : ''}
+        ${booking.mixingScope ? renderLine(isSv ? 'Spår' : 'Tracks', booking.mixingScope) : ''}
+        ${booking.projectDetails?.songs ? renderLine(isSv ? 'Antal låtar' : 'Songs', booking.projectDetails.songs) : ''}
+        ${booking.projectDetails?.reference ? renderLine(isSv ? 'Referens' : 'Reference', booking.projectDetails.reference) : ''}
+        ${booking.projectDetails?.deadline ? renderLine(isSv ? 'Deadline' : 'Deadline', new Date(booking.projectDetails.deadline).toLocaleDateString()) : ''}
+        ${booking.projectDetails?.description ? renderLine(isSv ? 'Beskrivning' : 'Description', booking.projectDetails.description) : ''}
+        ${renderLine(isSv ? 'Betalningsval' : 'Payment', booking.paymentChoice === 'deposit' ? (isSv ? '50% förskott' : '50% deposit') : (isSv ? 'Fullbetalning' : 'Full payment'))}
+      </div>
+      <div class="tot">
+        <p style="margin:0 0 8px;color:#999;font-size:14px">${isSv ? 'Totalt' : 'Total'}</p>
+        <div class="amt">${total.toLocaleString()} SEK</div>
+        ${booking.paymentChoice === 'deposit' ? `<p style="margin:8px 0 0;color:#666;font-size:14px">${isSv ? 'Förskott' : 'Deposit'}: ${deposit.toLocaleString()} SEK</p>` : ''}
+      </div>
+      <div class="ftr"><p>TOPLINER PRODUCTION</p><p style="color:#d4af37">${isSv ? 'Professionell Studio & Musikproduktion' : 'Professional Studio & Music Production'}</p></div>
+    </div></body></html>`;
 
     const customerEmail = await resend.emails.send({
       from: "TOPLINER PRODUCTION <onboarding@resend.dev>",
