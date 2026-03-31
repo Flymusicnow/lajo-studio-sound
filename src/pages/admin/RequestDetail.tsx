@@ -236,6 +236,13 @@ const RequestDetail = () => {
             </div>
           </div>
 
+          {/* Project Workflow */}
+          <ProjectWorkflow
+            projectStatus={projectStatus}
+            bookingRequestId={id!}
+            onUpdate={fetchRequest}
+          />
+
           {/* Notes */}
           <div className="bg-card border border-border rounded p-6">
             <h2 className="text-lg font-serif font-semibold mb-4">Interna anteckningar</h2>
