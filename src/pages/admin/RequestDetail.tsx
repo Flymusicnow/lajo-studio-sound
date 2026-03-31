@@ -5,7 +5,8 @@ import AdminLayout from '@/components/admin/AdminLayout';
 import StatusBadge from '@/components/admin/StatusBadge';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowLeft, CheckCircle, XCircle, CreditCard, FileCheck, Mail, Upload, ExternalLink } from 'lucide-react';
+import { ArrowLeft, CheckCircle, XCircle, CreditCard, FileCheck, Mail, Upload, ExternalLink, DollarSign } from 'lucide-react';
+import ProjectWorkflow from '@/components/admin/ProjectWorkflow';
 import { useToast } from '@/hooks/use-toast';
 
 const RequestDetail = () => {
