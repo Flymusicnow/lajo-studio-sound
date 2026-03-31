@@ -76,7 +76,7 @@ const NotificationBell = () => {
               id: payload.new.id,
               message: `Filer uppladdade`,
               time: new Date().toLocaleString('sv-SE', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
-              type: 'files',
+              type: 'files' as const,
             }, ...prev].slice(0, 10));
           }
         }
