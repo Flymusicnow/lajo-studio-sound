@@ -98,6 +98,25 @@ const translations: Record<Language, Record<string, string>> = {
     'booking.success.text': 'Din bokningsförfrågan är skickad. Du får snart en bekräftelse via e-post.',
     'booking.success.back': 'Tillbaka till startsidan',
 
+    // FAQ
+    'faq.title': 'Vanliga frågor',
+    'faq.difference.q': 'Vad är skillnaden mellan Studio Session och Producer Session?',
+    'faq.difference.a': 'I en Studio Session ansvarar jag för inspelning och teknisk kvalitet – du leder det kreativa. I en Producer Session arbetar vi aktivt tillsammans med låtens struktur, sound och arrangemang.',
+    'faq.duration.q': 'Hur lång tid tar en session?',
+    'faq.duration.a': 'Studio Session bokas i block om 4 eller 8 timmar. Producer Session bokas på samma sätt. Resultatpaket har sin egen tidsram beroende på paket.',
+    'faq.included.q': 'Vad ingår i priset?',
+    'faq.included.a': 'Alla sessioner inkluderar professionell studio, inspelning, teknisk hantering och fil-export. Producer Session inkluderar även aktiv produktion, arrangementstöd och kreativ riktning.',
+    'faq.delivery.q': 'Hur snabbt får jag leverans?',
+    'faq.delivery.a': 'Record Your Song levereras inom 5 arbetsdagar. Radio-Ready inom 14 arbetsdagar. EP Package enligt överenskommen tidsplan.',
+    'faq.trial.q': 'Kan jag boka en provtimme?',
+    'faq.trial.a': 'Just nu erbjuder vi inte enskilda provtimmar, men du kan boka ett kort samtal för att diskutera ditt projekt innan du bestämmer dig.',
+    'faq.equipment.q': 'Vilken utrustning används i studion?',
+    'faq.equipment.a': 'Vi arbetar med professionell inspelningsutrustning, högkvalitativa mikrofoner, preamps och monitorer i en akustiskt behandlad miljö.',
+    'faq.payment.q': 'Hur går betalningen till?',
+    'faq.payment.a': 'Timbaserade sessioner faktureras efter genomförd session. Resultatpaket faktureras enligt avtal – EP Package kräver 50% förskott.',
+    'faq.musicians.q': 'Kan jag ta med egna musiker?',
+    'faq.musicians.a': 'Absolut. Du är välkommen att ta med bandmedlemmar eller andra musiker till sessionen.',
+
     // Footer
     'footer.rights': 'Alla rättigheter förbehållna.',
   },
