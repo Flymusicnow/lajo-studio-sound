@@ -5,6 +5,7 @@ import { LayoutDashboard, FileText, Users, Calendar, LogOut, Menu, X } from 'luc
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
+import NotificationBell from '@/components/admin/NotificationBell';
 
 const navItems = [
   { label: 'Dashboard', icon: LayoutDashboard, path: '/admin' },
@@ -28,9 +29,12 @@ const AdminLayout = ({ children }: { children: ReactNode }) => {
     <div className="min-h-screen flex bg-background">
       {/* Desktop sidebar */}
       <aside className="hidden lg:flex flex-col w-64 border-r border-border bg-card">
-        <div className="p-6 border-b border-border">
-          <h1 className="text-primary font-serif text-lg font-semibold tracking-wide">TOPLINER</h1>
-          <p className="text-xs text-muted-foreground font-sans mt-1">Studio Admin</p>
+        <div className="p-6 border-b border-border flex items-center justify-between">
+          <div>
+            <h1 className="text-primary font-serif text-lg font-semibold tracking-wide">TOPLINER</h1>
+            <p className="text-xs text-muted-foreground font-sans mt-1">Studio Admin</p>
+          </div>
+          <NotificationBell />
         </div>
         <nav className="flex-1 p-4 space-y-1">
           {navItems.map((item) => (

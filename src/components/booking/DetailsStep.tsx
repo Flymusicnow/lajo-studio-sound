@@ -1,6 +1,8 @@
+import { useEffect, useState } from 'react';
 import { format } from 'date-fns';
-import { CalendarIcon } from 'lucide-react';
+import { CalendarIcon, AlertCircle } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { supabase } from '@/integrations/supabase/client';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
@@ -16,12 +18,52 @@ interface Props {
 }
 
 const DetailsStep = ({ state, dispatch }: Props) => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const setField = (field: string, value: any) => dispatch({ type: 'SET_FIELD', field, value });
+  const [blockedDates, setBlockedDates] = useState<Date[]>([]);
+  const [slotCap, setSlotCap] = useState(7);
+  const [bookedThisMonth, setBookedThisMonth] = useState(0);
+
+  useEffect(() => {
+    const fetchAvailability = async () => {
+      const [{ data: blocked }, { data: settings }, { data: bookings }] = await Promise.all([
+        supabase.from('blocked_dates').select('date'),
+        supabase.from('studio_settings').select('monthly_slot_cap').eq('id', 1).single(),
+        supabase.from('booking_requests').select('created_at, status').in('status', ['confirmed', 'paid']),
+      ]);
+
+      if (blocked) {
+        setBlockedDates(blocked.map(b => new Date(b.date + 'T00:00:00')));
+      }
+      if (settings) setSlotCap(settings.monthly_slot_cap);
+      if (bookings) {
+        const now = new Date();
+        const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+        setBookedThisMonth(bookings.filter(b => new Date(b.created_at) >= monthStart).length);
+      }
+    };
+    fetchAvailability();
+  }, []);
+
+  const isDateBlocked = (date: Date) => {
+    return date < new Date() || blockedDates.some(bd => 
+      bd.getFullYear() === date.getFullYear() && bd.getMonth() === date.getMonth() && bd.getDate() === date.getDate()
+    );
+  };
+
+  const slotsRemaining = slotCap - bookedThisMonth;
 
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-serif font-semibold">{t('bb.s7.title')}</h2>
+
+      {/* Availability warning */}
+      {slotsRemaining <= 2 && slotsRemaining > 0 && (
+        <div className="flex items-center gap-2 p-3 bg-primary/10 border border-primary/20 rounded text-sm font-sans">
+          <AlertCircle className="h-4 w-4 text-primary shrink-0" />
+          <span>{language === 'sv' ? `Begränsad tillgänglighet — ${slotsRemaining} plats(er) kvar denna månad` : `Limited availability — ${slotsRemaining} slot(s) remaining this month`}</span>
+        </div>
+      )}
 
       {/* Project details */}
       <div className="space-y-4">
@@ -53,7 +95,7 @@ const DetailsStep = ({ state, dispatch }: Props) => {
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start">
-              <Calendar mode="single" selected={state.deadline} onSelect={d => setField('deadline', d)} disabled={date => date < new Date()} className="p-3 pointer-events-auto" />
+              <Calendar mode="single" selected={state.deadline} onSelect={d => setField('deadline', d)} disabled={isDateBlocked} className="p-3 pointer-events-auto" />
             </PopoverContent>
           </Popover>
         </div>

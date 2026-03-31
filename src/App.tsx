@@ -9,6 +9,7 @@ import Index from "./pages/Index";
 import Booking from "./pages/Booking";
 import About from "./pages/About";
 import FileUpload from "./pages/FileUpload";
+import BookingSuccess from "./pages/BookingSuccess";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/admin/Login";
 import Dashboard from "./pages/admin/Dashboard";
@@ -34,6 +35,7 @@ const App = () => (
               <Route path="/booking" element={<Booking />} />
               <Route path="/about" element={<About />} />
               <Route path="/upload/:bookingId" element={<FileUpload />} />
+              <Route path="/booking/success" element={<BookingSuccess />} />
               <Route path="/admin/login" element={<Login />} />
               <Route path="/admin" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
               <Route path="/admin/requests" element={<ProtectedRoute><Requests /></ProtectedRoute>} />
