@@ -231,6 +231,18 @@ const translations: Record<Language, Record<string, string>> = {
     'about.cta.title': 'Redo att börja?',
     'about.cta.book': 'Bygg din session',
 
+    // Quick Booking
+    'qb.label': 'Snabbbokning',
+    'qb.title': 'Quick Studio Booking',
+    'qb.subtitle': 'Snabbbokning för artister som redan vet vad de behöver och bara vill ha studiotid.',
+    'qb.step1': '1. Välj session',
+    'qb.step2': '2. Välj datum',
+    'qb.step3': '3. Kontaktuppgifter',
+    'qb.message': 'Meddelande (valfritt)',
+    'qb.messagePlaceholder': 'Berätta kort om ditt projekt...',
+    'qb.cta': 'Skicka bokningsförfrågan',
+    'qb.link': 'Bara studiotid? Snabboka här',
+
     // Footer
     'footer.rights': 'Alla rättigheter förbehållna.',
   },
