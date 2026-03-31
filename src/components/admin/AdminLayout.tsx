@@ -5,6 +5,7 @@ import { LayoutDashboard, FileText, Users, Calendar, LogOut, Menu, X } from 'luc
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
+import NotificationBell from '@/components/admin/NotificationBell';
 
 const navItems = [
   { label: 'Dashboard', icon: LayoutDashboard, path: '/admin' },
