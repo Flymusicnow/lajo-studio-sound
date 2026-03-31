@@ -215,6 +215,22 @@ const translations: Record<Language, Record<string, string>> = {
     'bb.price.deposit': 'Förskott (50%)',
     'bb.price.remaining': 'Resterande',
 
+    // About
+    'about.label': 'Om mig',
+    'about.title': 'Topliner Production',
+    'about.bio1': 'Jag driver Topliner Production – en professionell studio för artister, band och körer som vill ta sin musik till nästa nivå.',
+    'about.bio2': 'Varje session leds av mig som ansvarig producent. Det handlar inte om att hyra en studio – det handlar om att arbeta med någon som bryr sig om resultatet lika mycket som du.',
+    'about.bio3': 'Min bakgrund spänner över kommersiell produktion, mixing och mastering. Jag arbetar med artister som är seriösa med sin musik och vill ha en tydlig kreativ riktning.',
+    'about.what.title': 'Vad jag gör',
+    'about.what.1': 'Produktion – från idé till färdig låt',
+    'about.what.2': 'Mixing & mastering för release',
+    'about.what.3': 'Kreativ riktning & arrangemang',
+    'about.what.4': 'Sessioner för artister, band & körer',
+    'about.philosophy.title': 'Kvalitet, riktning, smak',
+    'about.philosophy.text': 'Jag tror på att varje projekt förtjänar en tydlig kreativ vision. Kvalitet handlar inte bara om ljud – det handlar om riktning, smak och att våga ta beslut som gör musiken bättre.',
+    'about.cta.title': 'Redo att börja?',
+    'about.cta.book': 'Bygg din session',
+
     // Footer
     'footer.rights': 'Alla rättigheter förbehållna.',
   },
@@ -412,6 +428,22 @@ const translations: Record<Language, Record<string, string>> = {
     'bb.price.total': 'Total',
     'bb.price.deposit': 'Deposit (50%)',
     'bb.price.remaining': 'Remaining',
+
+    // About
+    'about.label': 'About',
+    'about.title': 'Topliner Production',
+    'about.bio1': 'I run Topliner Production – a professional studio for artists, bands and choirs who want to take their music to the next level.',
+    'about.bio2': 'Every session is led by me as the responsible producer. This is not about renting a studio – it\'s about working with someone who cares about the result as much as you do.',
+    'about.bio3': 'My background spans commercial production, mixing and mastering. I work with artists who are serious about their music and want a clear creative direction.',
+    'about.what.title': 'What I do',
+    'about.what.1': 'Production – from idea to finished song',
+    'about.what.2': 'Mixing & mastering for release',
+    'about.what.3': 'Creative direction & arrangement',
+    'about.what.4': 'Sessions for artists, bands & choirs',
+    'about.philosophy.title': 'Quality, direction, taste',
+    'about.philosophy.text': 'I believe every project deserves a clear creative vision. Quality isn\'t just about sound – it\'s about direction, taste, and having the courage to make decisions that make the music better.',
+    'about.cta.title': 'Ready to start?',
+    'about.cta.book': 'Build your session',
 
     // Footer
     'footer.rights': 'All rights reserved.',

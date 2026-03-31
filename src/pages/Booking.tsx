@@ -68,6 +68,49 @@ const Booking = () => {
         return { id, label: t(`bb.s3.${id === 'sound-design' ? 'sound' : id === 'extra-revision' ? 'revision' : id}`), price: addon?.price || 0 };
       });
 
+      // Find or create customer
+      let customerId: string | null = null;
+      const { data: existingCustomer } = await supabase
+        .from('customers')
+        .select('id')
+        .eq('email', state.email)
+        .maybeSingle();
+
+      if (existingCustomer) {
+        customerId = existingCustomer.id;
+      } else {
+        const { data: newCustomer } = await supabase
+          .from('customers')
+          .insert({ name: state.name, email: state.email, phone: state.phone || null })
+          .select('id')
+          .single();
+        if (newCustomer) customerId = newCustomer.id;
+      }
+
+      // Insert booking request
+      await supabase.from('booking_requests').insert({
+        customer_id: customerId,
+        session_type: state.session,
+        session_price: session?.price || 0,
+        creative_types: state.creativeTypes,
+        add_ons: selectedAddons,
+        mastering_type: state.mastering,
+        mastering_tracks: state.masteringTracks,
+        result_package: state.resultPackage,
+        result_package_price: pkg?.price || 0,
+        mixing_scope: state.mixingScope,
+        total_price: total,
+        deposit_amount: deposit,
+        payment_choice: state.paymentChoice,
+        song_count: state.songCount,
+        track_count: state.trackCount,
+        reference_url: state.referenceUrl || null,
+        deadline: state.deadline?.toISOString().split('T')[0] || null,
+        description: state.description || null,
+        custom_session_text: state.customSessionText || null,
+      });
+
+      // Send email notification
       const payload = {
         language,
         name: state.name,
@@ -85,8 +128,7 @@ const Booking = () => {
         depositAmount: deposit,
       };
 
-      const { error } = await supabase.functions.invoke('send-booking-email', { body: payload });
-      if (error) throw error;
+      await supabase.functions.invoke('send-booking-email', { body: payload });
       setIsSubmitted(true);
     } catch (error: any) {
       console.error('Error sending booking:', error);
