@@ -24,12 +24,16 @@ const Dashboard = () => {
 
   useEffect(() => {
     const fetchStats = async () => {
-      const { data: requests } = await supabase.from('booking_requests').select('status, payment_status, created_at');
-      const { data: projects } = await supabase.from('project_status').select('status');
+      const [{ data: requests }, { data: projects }, { data: settings }] = await Promise.all([
+        supabase.from('booking_requests').select('status, payment_status, created_at'),
+        supabase.from('project_status').select('status'),
+        supabase.from('studio_settings').select('monthly_slot_cap').eq('id', 1).single(),
+      ]);
 
       if (requests) {
         const now = new Date();
         const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+        const cap = settings?.monthly_slot_cap || 7;
         
         setStats({
           newRequests: requests.filter(r => r.status === 'new').length,
@@ -42,7 +46,7 @@ const Dashboard = () => {
             ['confirmed', 'paid'].includes(r.status) && 
             new Date(r.created_at) >= monthStart
           ).length,
-          slotCap: 7,
+          slotCap: cap,
         });
       }
       setLoading(false);

@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { LayoutDashboard, FileText, Users, LogOut, Menu, X } from 'lucide-react';
+import { LayoutDashboard, FileText, Users, Calendar, LogOut, Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
@@ -10,6 +10,7 @@ const navItems = [
   { label: 'Dashboard', icon: LayoutDashboard, path: '/admin' },
   { label: 'Requests', icon: FileText, path: '/admin/requests' },
   { label: 'Customers', icon: Users, path: '/admin/customers' },
+  { label: 'Calendar', icon: Calendar, path: '/admin/calendar' },
 ];
 
 const AdminLayout = ({ children }: { children: ReactNode }) => {
