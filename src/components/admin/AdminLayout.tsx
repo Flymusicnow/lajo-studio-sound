@@ -10,6 +10,7 @@ const navItems = [
   { label: 'Dashboard', icon: LayoutDashboard, path: '/admin' },
   { label: 'Requests', icon: FileText, path: '/admin/requests' },
   { label: 'Customers', icon: Users, path: '/admin/customers' },
+  { label: 'Calendar', icon: Calendar, path: '/admin/calendar' },
 ];
 
 const AdminLayout = ({ children }: { children: ReactNode }) => {
