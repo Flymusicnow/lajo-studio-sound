@@ -231,6 +231,18 @@ const translations: Record<Language, Record<string, string>> = {
     'about.cta.title': 'Redo att börja?',
     'about.cta.book': 'Bygg din session',
 
+    // Quick Booking
+    'qb.label': 'Snabbbokning',
+    'qb.title': 'Quick Studio Booking',
+    'qb.subtitle': 'Snabbbokning för artister som redan vet vad de behöver och bara vill ha studiotid.',
+    'qb.step1': '1. Välj session',
+    'qb.step2': '2. Välj datum',
+    'qb.step3': '3. Kontaktuppgifter',
+    'qb.message': 'Meddelande (valfritt)',
+    'qb.messagePlaceholder': 'Berätta kort om ditt projekt...',
+    'qb.cta': 'Skicka bokningsförfrågan',
+    'qb.link': 'Bara studiotid? Snabboka här',
+
     // Footer
     'footer.rights': 'Alla rättigheter förbehållna.',
   },
@@ -444,6 +456,18 @@ const translations: Record<Language, Record<string, string>> = {
     'about.philosophy.text': 'I believe every project deserves a clear creative vision. Quality isn\'t just about sound – it\'s about direction, taste, and having the courage to make decisions that make the music better.',
     'about.cta.title': 'Ready to start?',
     'about.cta.book': 'Build your session',
+
+    // Quick Booking
+    'qb.label': 'Quick Booking',
+    'qb.title': 'Quick Studio Booking',
+    'qb.subtitle': 'Quick booking for artists who already know what they need and just want studio time.',
+    'qb.step1': '1. Select session',
+    'qb.step2': '2. Select date',
+    'qb.step3': '3. Contact details',
+    'qb.message': 'Message (optional)',
+    'qb.messagePlaceholder': 'Tell us briefly about your project...',
+    'qb.cta': 'Send booking request',
+    'qb.link': 'Just need studio time? Quick book here',
 
     // Footer
     'footer.rights': 'All rights reserved.',

@@ -197,7 +197,9 @@ export type Database = {
         Row: {
           booking_request_id: string
           file_link: string | null
+          file_method: string | null
           file_notes: string | null
+          file_received_at: string | null
           file_status: Database["public"]["Enums"]["file_status"]
           id: string
           status: Database["public"]["Enums"]["project_workflow_status"]
@@ -206,7 +208,9 @@ export type Database = {
         Insert: {
           booking_request_id: string
           file_link?: string | null
+          file_method?: string | null
           file_notes?: string | null
+          file_received_at?: string | null
           file_status?: Database["public"]["Enums"]["file_status"]
           id?: string
           status?: Database["public"]["Enums"]["project_workflow_status"]
@@ -215,7 +219,9 @@ export type Database = {
         Update: {
           booking_request_id?: string
           file_link?: string | null
+          file_method?: string | null
           file_notes?: string | null
+          file_received_at?: string | null
           file_status?: Database["public"]["Enums"]["file_status"]
           id?: string
           status?: Database["public"]["Enums"]["project_workflow_status"]
