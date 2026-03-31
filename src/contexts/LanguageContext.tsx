@@ -23,6 +23,7 @@ const translations: Record<Language, Record<string, string>> = {
     'hero.subtitle': 'Välj hur du vill arbeta – Studio Session, Producer Session eller Resultatpaket.',
     'hero.cta.book': 'Boka session',
     'hero.cta.packages': 'Se paket & priser',
+    'hero.quickBooking': 'Bara studiotid? Snabboka här',
 
     // Three Ways
     'ways.title': 'Tre sätt att skapa musik hos TOPLINER PRODUCTION',
