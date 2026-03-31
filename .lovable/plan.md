@@ -1,90 +1,54 @@
 
 
-# TOPLINER PRODUCTION -- Konverteringsoptimerad hemsida
+# FAQ-sektion for TOPLINER PRODUCTION
 
 ## Sammanfattning
+Lagg till en FAQ-sektion pa startsidan med vanliga fragor om sessioner, priser och leveranstider. Sektionen placeras mellan "For Vem" och "Urgency CTA" for att bemota invandningar innan sista bokningsknappen.
 
-Ombyggnad av hela sajten fran LAJO Studio till TOPLINER PRODUCTION. En ensidesstruktur optimerad for konvertering med tydliga sektioner, priser och bokningsknappar i varje sektion. Designstilen behalles (mork, premium, minimal) men anpassas till TOPLINER PRODUCTIONs varumarke.
+## Testresultat
 
-## Vad som andras
+Fore implementering testades hela sajten:
 
-### 1. Branding och navigation
-- Logo: LAJO -> TOPLINER PRODUCTION
-- Navigering: Hem, Paket, Boka (tar bort About-sidan)
-- Sprakvaxlaren behalles (SV/EN)
-- Header uppdateras med ny logotyp och ankarlankningar till sektioner pa startsidan
+- **Bokningsflode**: Fungerar korrekt. "Boka session" leder till formular, val av tjanst/namn/email fungerar, bekraftelsesidan visas efter inskickning.
+- **Edge function**: Startar korrekt (boot time 36ms). E-postfunktionen ar redo.
+- **Mobilvy (390x844)**: Hamburger-meny visas, alla sektioner renderas korrekt, CTA-knappar ar valplacerade, texten ar lasbar.
+- **Desktop**: Hero, ThreeWays (priser), Process, ForWho och UrgencyCTA visas som forvantat.
 
-### 2. Startsidan (Index.tsx) -- ny sektionsstruktur
+## Vad som byggs
 
-Alla sektioner byggs som separata komponenter pa en enda sida:
+### 1. Ny komponent: `src/components/FAQ.tsx`
+- Anvander befintlig Accordion-komponent fran `@radix-ui/react-accordion`
+- 6-8 vanliga fragor pa bade svenska och engelska
+- Samma designsprak som ovriga sektioner (mork bakgrund, serif-rubriker, sans-serif brodtext)
+- Fragor fokuserade pa konvertering: pris, leverans, vad som ingar, hur bokning fungerar
 
-**Hero**
-- Rubrik: "Professionell studio for artister, band och korer"
-- Underrubrik om de tre arbetssatten
-- Primart CTA: "Boka session" (lankar till /booking)
-- Sekundart CTA: "Se paket & priser" (ankarlank till #paket)
+### 2. Fragor som ingar
 
-**Tre satt att jobba (ny komponent: ThreeWays.tsx)**
-- Tre kort/kolumner med Studio Session, Producer Session, Resultatpaket
-- Varje kort visar: rubrik, text, "Passar for"-lista, priser, CTA-knapp
-- Resultatpaketet visar tre underpaket: Record Your Song (8 900 kr), Radio-Ready (18 000 kr), EP Package (45 000 kr)
+**Svenska:**
+1. Vad ar skillnaden mellan Studio Session och Producer Session?
+2. Hur lang tid tar en session?
+3. Vad ingar i priset?
+4. Hur snabbt far jag leverans?
+5. Kan jag boka en provtimme?
+6. Vilken utrustning anvands i studion?
+7. Hur gar betalningen till?
+8. Kan jag ta med egna musiker?
 
-**Process (ny komponent: Process.tsx)**
-- 6 steg visuellt: Boka -> Session -> Produktion -> Leverans -> Revision -> Klar for release
-- Horisontell tidslinje pa desktop, vertikal pa mobil
+### 3. Uppdaterade filer
 
-**For Vem (ny komponent: ForWho.tsx)**
-- Kort sektion med positioneringstext
+- `src/contexts/LanguageContext.tsx` -- Nya oversattningsnycklar for alla FAQ-fragor och svar (SV + EN)
+- `src/pages/Index.tsx` -- Lagg till FAQ-komponenten mellan ForWho och UrgencyCTA, inuti AnimatedSection
 
-**Urgency/CTA (uppdatera CTA.tsx)**
-- "Begransat antal sessioner varje vecka"
-- Stark bokningsknapp
-
-### 3. Bokningssidan (Booking.tsx)
-- Anpassas till TOPLINER: tjanstval blir Studio Session / Producer Session / Resultatpaket
-- Behaller e-postnotifieringar via befintlig edge function
-- Formularet forenklas: namn, email, telefon, tjanst, beskrivning
-
-### 4. Prissidan tas bort
-- All prisinformation visas direkt pa startsidan i "Tre satt att jobba"-sektionen
-- /pricing-routen tas bort fran App.tsx
-
-### 5. About-sidan tas bort
-- /about-routen tas bort fran App.tsx
-
-### 6. Oversattningar (LanguageContext.tsx)
-- Alla LAJO-texter ersatts med TOPLINER PRODUCTION-texter
-- Bade SV och EN uppdateras med nytt innehall
-
-### 7. Filer som skapas
-- `src/components/ThreeWays.tsx` -- De tre arbetssatten med priser och CTA
-- `src/components/Process.tsx` -- 6-stegsprocessen
-- `src/components/ForWho.tsx` -- Malgruppssektionen
-- `src/components/UrgencyCTA.tsx` -- Urgency-sektion med bokningsknapp
-
-### 8. Filer som uppdateras
-- `src/pages/Index.tsx` -- Ny sektionsstruktur
-- `src/components/Hero.tsx` -- Nytt innehall
-- `src/components/Header.tsx` -- Ny logo och navigation
-- `src/components/Footer.tsx` -- Ny logo
-- `src/components/Layout.tsx` -- Oforandrad
-- `src/contexts/LanguageContext.tsx` -- Helt nytt innehall
-- `src/App.tsx` -- Ta bort /about och /pricing rutter
-- `src/pages/Booking.tsx` -- Anpassat formular
-
-### 9. Filer som tas bort / inte langre anvands
-- `src/pages/Pricing.tsx` -- Ersatts av sektioner pa startsidan
-- `src/pages/About.tsx` -- Tas bort
-- `src/components/StudioIntro.tsx` -- Ersatts av nya komponenter
-- `src/components/Services.tsx` -- Ersatts av ThreeWays
-- `src/components/Portfolio.tsx` -- Tas bort (laggs till i v2)
+### 4. Designval
+- Accordion-stil med ett fragetecken i taget oppet
+- Guldaccent pa chevron-ikonen
+- Sektionsrubrik: "Vanliga fragor" / "Frequently Asked Questions"
+- Tunn guldlinje som visuell separator under rubriken (samma stil som ovriga sektioner)
 
 ## Tekniska detaljer
 
-- Designsystemet (farger, typografi, animationer) behalles fran index.css och tailwind.config.ts -- det passar TOPLINER PRODUCTIONs stil
-- Befintliga UI-komponenter (Button, Card, Select, Input, Textarea) ateranvands
-- AnimatedSection-komponenten ateranvands for scroll-animationer
-- Edge function for e-post behalles, uppdateras med nytt varumarke i mejlet
-- Inga databasandringar behovs
-- Mobilanpassning via Tailwind responsive classes (grid -> stack)
+- Ateranvander befintliga `Accordion`, `AccordionItem`, `AccordionTrigger`, `AccordionContent` fran `src/components/ui/accordion.tsx`
+- Ateranvander `AnimatedSection` for scroll-animation
+- Inga databasandringar, inga nya beroenden
+- Mobilanpassning via `max-w-3xl mx-auto` och Tailwind responsive classes
 
