@@ -12,6 +12,7 @@ const Header = () => {
     { path: '/', label: t('nav.home') },
     { path: '/#paket', label: t('nav.packages'), isAnchor: true },
     { path: '/booking', label: t('nav.booking') },
+    { path: '/quick-booking', label: t('nav.quickBooking') },
   ];
 
   const isActive = (path: string) => location.pathname === path;

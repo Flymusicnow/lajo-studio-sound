@@ -16,12 +16,14 @@ const translations: Record<Language, Record<string, string>> = {
     'nav.home': 'Hem',
     'nav.packages': 'Paket',
     'nav.booking': 'Boka',
+    'nav.quickBooking': 'Snabbbokning',
 
     // Hero
     'hero.title': 'Professionell studio för artister, band och körer',
     'hero.subtitle': 'Välj hur du vill arbeta – Studio Session, Producer Session eller Resultatpaket.',
     'hero.cta.book': 'Boka session',
     'hero.cta.packages': 'Se paket & priser',
+    'hero.quickBooking': 'Bara studiotid? Snabboka här',
 
     // Three Ways
     'ways.title': 'Tre sätt att skapa musik hos TOPLINER PRODUCTION',
@@ -251,12 +253,14 @@ const translations: Record<Language, Record<string, string>> = {
     'nav.home': 'Home',
     'nav.packages': 'Packages',
     'nav.booking': 'Book',
+    'nav.quickBooking': 'Quick Booking',
 
     // Hero
     'hero.title': 'Professional Studio for Artists, Bands & Choirs',
     'hero.subtitle': 'Choose how you want to work – Studio Session, Producer Session or Result Package.',
     'hero.cta.book': 'Book a Session',
     'hero.cta.packages': 'See Packages & Pricing',
+    'hero.quickBooking': 'Just need studio time? Quick book here',
 
     // Three Ways
     'ways.title': 'Three Ways to Create Music at TOPLINER PRODUCTION',

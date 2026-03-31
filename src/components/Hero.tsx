@@ -48,6 +48,12 @@ const Hero = () => {
               <a href="#paket">{t('hero.cta.packages')}</a>
             </Button>
           </div>
+          
+          <p className="mt-6 text-sm text-muted-foreground font-sans fade-in-delay-2">
+            <Link to="/quick-booking" className="text-primary hover:underline">
+              {t('hero.quickBooking')} →
+            </Link>
+          </p>
         </div>
       </div>
 
