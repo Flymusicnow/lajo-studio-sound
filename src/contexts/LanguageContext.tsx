@@ -457,6 +457,18 @@ const translations: Record<Language, Record<string, string>> = {
     'about.cta.title': 'Ready to start?',
     'about.cta.book': 'Build your session',
 
+    // Quick Booking
+    'qb.label': 'Quick Booking',
+    'qb.title': 'Quick Studio Booking',
+    'qb.subtitle': 'Quick booking for artists who already know what they need and just want studio time.',
+    'qb.step1': '1. Select session',
+    'qb.step2': '2. Select date',
+    'qb.step3': '3. Contact details',
+    'qb.message': 'Message (optional)',
+    'qb.messagePlaceholder': 'Tell us briefly about your project...',
+    'qb.cta': 'Send booking request',
+    'qb.link': 'Just need studio time? Quick book here',
+
     // Footer
     'footer.rights': 'All rights reserved.',
   },

@@ -165,6 +165,9 @@ const Booking = () => {
           <div className="max-w-lg mx-auto text-center mb-10">
             <h1 className="text-3xl md:text-4xl font-serif font-semibold mb-3">{t('bb.title')}</h1>
             <p className="text-muted-foreground font-sans text-sm">{t('bb.subtitle')}</p>
+            <a href="/quick-booking" className="inline-block mt-4 text-primary font-sans text-sm hover:underline">
+              {t('qb.link')} →
+            </a>
             <div className="w-16 h-[1px] bg-primary mx-auto mt-6" />
           </div>
 
