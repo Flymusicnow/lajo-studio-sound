@@ -215,6 +215,22 @@ const translations: Record<Language, Record<string, string>> = {
     'bb.price.deposit': 'Förskott (50%)',
     'bb.price.remaining': 'Resterande',
 
+    // About
+    'about.label': 'Om mig',
+    'about.title': 'Topliner Production',
+    'about.bio1': 'Jag driver Topliner Production – en professionell studio för artister, band och körer som vill ta sin musik till nästa nivå.',
+    'about.bio2': 'Varje session leds av mig som ansvarig producent. Det handlar inte om att hyra en studio – det handlar om att arbeta med någon som bryr sig om resultatet lika mycket som du.',
+    'about.bio3': 'Min bakgrund spänner över kommersiell produktion, mixing och mastering. Jag arbetar med artister som är seriösa med sin musik och vill ha en tydlig kreativ riktning.',
+    'about.what.title': 'Vad jag gör',
+    'about.what.1': 'Produktion – från idé till färdig låt',
+    'about.what.2': 'Mixing & mastering för release',
+    'about.what.3': 'Kreativ riktning & arrangemang',
+    'about.what.4': 'Sessioner för artister, band & körer',
+    'about.philosophy.title': 'Kvalitet, riktning, smak',
+    'about.philosophy.text': 'Jag tror på att varje projekt förtjänar en tydlig kreativ vision. Kvalitet handlar inte bara om ljud – det handlar om riktning, smak och att våga ta beslut som gör musiken bättre.',
+    'about.cta.title': 'Redo att börja?',
+    'about.cta.book': 'Bygg din session',
+
     // Footer
     'footer.rights': 'Alla rättigheter förbehållna.',
   },
