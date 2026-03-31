@@ -12,6 +12,7 @@ const navItems = [
   { label: 'Requests', icon: FileText, path: '/admin/requests' },
   { label: 'Customers', icon: Users, path: '/admin/customers' },
   { label: 'Calendar', icon: Calendar, path: '/admin/calendar' },
+  { label: 'Innehåll', icon: Palette, path: '/admin/content' },
 ];
 
 const AdminLayout = ({ children }: { children: ReactNode }) => {
