@@ -14,6 +14,27 @@ export type Database = {
   }
   public: {
     Tables: {
+      blocked_dates: {
+        Row: {
+          created_at: string
+          date: string
+          id: string
+          reason: string | null
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          id?: string
+          reason?: string | null
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          id?: string
+          reason?: string | null
+        }
+        Relationships: []
+      }
       booking_requests: {
         Row: {
           add_ons: Json | null
@@ -209,6 +230,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      studio_settings: {
+        Row: {
+          id: number
+          monthly_slot_cap: number
+          updated_at: string
+        }
+        Insert: {
+          id?: number
+          monthly_slot_cap?: number
+          updated_at?: string
+        }
+        Update: {
+          id?: number
+          monthly_slot_cap?: number
+          updated_at?: string
+        }
+        Relationships: []
       }
     }
     Views: {
