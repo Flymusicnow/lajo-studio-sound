@@ -207,6 +207,25 @@ const translations: Record<Language, Record<string, string>> = {
     'booking.success.text': 'Your booking request has been submitted. You\'ll receive confirmation shortly.',
     'booking.success.back': 'Back to home',
 
+    // FAQ
+    'faq.title': 'Frequently Asked Questions',
+    'faq.difference.q': 'What is the difference between Studio Session and Producer Session?',
+    'faq.difference.a': 'In a Studio Session, I handle recording and technical quality – you lead the creative direction. In a Producer Session, we actively collaborate on the song\'s structure, sound and arrangement.',
+    'faq.duration.q': 'How long is a session?',
+    'faq.duration.a': 'Studio Sessions are booked in 4 or 8 hour blocks. Producer Sessions work the same way. Result Packages have their own timeline depending on the package.',
+    'faq.included.q': 'What is included in the price?',
+    'faq.included.a': 'All sessions include professional studio, recording, technical handling and file export. Producer Session also includes active production, arrangement support and creative direction.',
+    'faq.delivery.q': 'How fast do I get delivery?',
+    'faq.delivery.a': 'Record Your Song is delivered within 5 business days. Radio-Ready within 14 business days. EP Package per agreed timeline.',
+    'faq.trial.q': 'Can I book a trial session?',
+    'faq.trial.a': 'We don\'t currently offer single trial hours, but you can book a short call to discuss your project before committing.',
+    'faq.equipment.q': 'What equipment is used in the studio?',
+    'faq.equipment.a': 'We work with professional recording equipment, high-quality microphones, preamps and monitors in an acoustically treated environment.',
+    'faq.payment.q': 'How does payment work?',
+    'faq.payment.a': 'Hourly sessions are invoiced after the session. Result Packages are invoiced per agreement – EP Package requires 50% upfront.',
+    'faq.musicians.q': 'Can I bring my own musicians?',
+    'faq.musicians.a': 'Absolutely. You\'re welcome to bring band members or other musicians to the session.',
+
     // Footer
     'footer.rights': 'All rights reserved.',
   },
