@@ -231,6 +231,42 @@ export type Database = {
           },
         ]
       }
+      site_media: {
+        Row: {
+          created_at: string
+          description: string | null
+          display_order: number
+          embed_url: string
+          id: string
+          is_visible: boolean
+          media_type: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          embed_url: string
+          id?: string
+          is_visible?: boolean
+          media_type?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          embed_url?: string
+          id?: string
+          is_visible?: boolean
+          media_type?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       studio_settings: {
         Row: {
           id: number
@@ -245,6 +281,39 @@ export type Database = {
         Update: {
           id?: number
           monthly_slot_cap?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      testimonials: {
+        Row: {
+          created_at: string
+          customer_name: string
+          customer_role: string | null
+          display_order: number
+          id: string
+          is_approved: boolean
+          quote: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          customer_name: string
+          customer_role?: string | null
+          display_order?: number
+          id?: string
+          is_approved?: boolean
+          quote: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          customer_name?: string
+          customer_role?: string | null
+          display_order?: number
+          id?: string
+          is_approved?: boolean
+          quote?: string
           updated_at?: string
         }
         Relationships: []
