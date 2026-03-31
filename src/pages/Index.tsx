@@ -21,6 +21,9 @@ const Index = () => {
         <ForWho />
       </AnimatedSection>
       <AnimatedSection>
+        <FAQ />
+      </AnimatedSection>
+      <AnimatedSection>
         <UrgencyCTA />
       </AnimatedSection>
     </Layout>
