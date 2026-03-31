@@ -1,3 +1,4 @@
+import { HelmetProvider } from "react-helmet-async";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -18,11 +19,13 @@ import RequestDetail from "./pages/admin/RequestDetail";
 import Customers from "./pages/admin/Customers";
 import CustomerDetail from "./pages/admin/CustomerDetail";
 import Calendar from "./pages/admin/Calendar";
+import Content from "./pages/admin/Content";
 import ProtectedRoute from "./components/admin/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
 const App = () => (
+  <HelmetProvider>
   <QueryClientProvider client={queryClient}>
     <LanguageProvider>
       <AuthProvider>
@@ -43,6 +46,7 @@ const App = () => (
               <Route path="/admin/customers" element={<ProtectedRoute><Customers /></ProtectedRoute>} />
               <Route path="/admin/customers/:id" element={<ProtectedRoute><CustomerDetail /></ProtectedRoute>} />
               <Route path="/admin/calendar" element={<ProtectedRoute><Calendar /></ProtectedRoute>} />
+              <Route path="/admin/content" element={<ProtectedRoute><Content /></ProtectedRoute>} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
@@ -50,6 +54,7 @@ const App = () => (
       </AuthProvider>
     </LanguageProvider>
   </QueryClientProvider>
+  </HelmetProvider>
 );
 
 export default App;
