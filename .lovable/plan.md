@@ -1,24 +1,17 @@
 
 
-# Lägg till signup på admin login-sidan
+# Lösning: Aktivera auto-confirm för admin-signup
 
-## Vad som byggs
+## Problem
+Användaren har skapat ett konto men verifieringsmejlet nådde rate limit vid upprepade försök. Kontot finns men är inte bekräftat.
 
-Utöka `/admin/login` med en toggle mellan "Logga in" och "Skapa konto". Signup-formuläret använder `supabase.auth.signUp()` med e-post och lösenord. Eftersom `handle_new_user`-triggern redan skapar en profil med `role = 'admin'` behövs inga databasändringar.
+## Lösning
+Aktivera auto-confirm för e-post signup via `cloud--configure_auth`. Detta bekräftar alla nya konton automatiskt (inklusive det befintliga kontot vid nästa inloggningsförsök).
 
-## Ändringar
+## Steg
+1. Anropa `cloud--configure_auth` med `enable_signup: true, double_confirm_email: false` för att slå på auto-confirm
+2. Användaren kan sedan logga in direkt på `/admin/login` med sin e-post och lösenord
 
-### `src/pages/admin/Login.tsx`
-- Lägg till state `isSignUp` som togglar mellan login och signup
-- Vid signup: anropa `supabase.auth.signUp({ email, password })`
-- Visa bekräftelsemeddelande efter signup ("Kolla din e-post för att verifiera kontot")
-- Lägg till lösenordsbekräftelse-fält vid signup
-- Toggle-länk: "Har du inget konto? Skapa ett" / "Har du redan ett konto? Logga in"
-
-### `src/hooks/useAuth.tsx`
-- Lägg till `signUp`-funktion i AuthContext som wrapper kring `supabase.auth.signUp()`
-
-## Säkerhet
-- Befintlig `handle_new_user`-trigger skapar automatiskt en profil med `role = 'admin'` — detta fungerar för en studio med en ägare
-- Inga nya tabeller eller RLS-ändringar behövs
+## Alternativ
+Om användaren hellre vill behålla e-postverifiering: vänta ~1 timme tills rate limit nollställs, sedan registrera sig igen eller be mig manuellt bekräfta kontot.
 
