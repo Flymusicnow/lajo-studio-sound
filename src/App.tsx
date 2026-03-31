@@ -25,6 +25,7 @@ import ProtectedRoute from "./components/admin/ProtectedRoute";
 const queryClient = new QueryClient();
 
 const App = () => (
+  <HelmetProvider>
   <QueryClientProvider client={queryClient}>
     <LanguageProvider>
       <AuthProvider>
