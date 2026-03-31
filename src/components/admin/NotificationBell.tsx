@@ -62,7 +62,7 @@ const NotificationBell = () => {
               id: payload.new.id,
               message: `Betalning mottagen`,
               time: new Date().toLocaleString('sv-SE', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
-              type: 'payment',
+              type: 'payment' as const,
             }, ...prev].slice(0, 10));
           }
         }
