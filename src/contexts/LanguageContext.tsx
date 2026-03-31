@@ -16,6 +16,7 @@ const translations: Record<Language, Record<string, string>> = {
     'nav.home': 'Hem',
     'nav.packages': 'Paket',
     'nav.booking': 'Boka',
+    'nav.quickBooking': 'Snabbbokning',
 
     // Hero
     'hero.title': 'Professionell studio för artister, band och körer',
