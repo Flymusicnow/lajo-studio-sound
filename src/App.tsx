@@ -9,6 +9,7 @@ import Index from "./pages/Index";
 import Booking from "./pages/Booking";
 import About from "./pages/About";
 import FileUpload from "./pages/FileUpload";
+import BookingSuccess from "./pages/BookingSuccess";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/admin/Login";
 import Dashboard from "./pages/admin/Dashboard";
