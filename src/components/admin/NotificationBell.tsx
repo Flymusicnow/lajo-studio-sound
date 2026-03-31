@@ -49,7 +49,7 @@ const NotificationBell = () => {
             id: payload.new.id,
             message: `Ny bokningsförfrågan`,
             time: new Date().toLocaleString('sv-SE', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
-            type: 'new_booking',
+            type: 'new_booking' as const,
           }, ...prev].slice(0, 10));
         }
       )
