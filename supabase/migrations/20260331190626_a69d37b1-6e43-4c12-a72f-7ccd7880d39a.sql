@@ -1,0 +1,1 @@
+ALTER TABLE public.project_status ADD COLUMN IF NOT EXISTS file_received_at timestamptz, ADD COLUMN IF NOT EXISTS file_method text DEFAULT 'direct';
