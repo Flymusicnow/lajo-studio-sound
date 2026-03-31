@@ -14,7 +14,202 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      booking_requests: {
+        Row: {
+          add_ons: Json | null
+          admin_notes: string | null
+          created_at: string
+          creative_types: Json | null
+          custom_session_text: string | null
+          customer_id: string | null
+          deadline: string | null
+          deposit_amount: number
+          description: string | null
+          id: string
+          mastering_tracks: number | null
+          mastering_type: string | null
+          mixing_scope: string | null
+          payment_choice: string | null
+          payment_status: Database["public"]["Enums"]["payment_status"]
+          reference_url: string | null
+          requested_date: string | null
+          result_package: string | null
+          result_package_price: number
+          session_price: number
+          session_type: string | null
+          song_count: string | null
+          status: Database["public"]["Enums"]["booking_status"]
+          total_price: number
+          track_count: string | null
+          updated_at: string
+        }
+        Insert: {
+          add_ons?: Json | null
+          admin_notes?: string | null
+          created_at?: string
+          creative_types?: Json | null
+          custom_session_text?: string | null
+          customer_id?: string | null
+          deadline?: string | null
+          deposit_amount?: number
+          description?: string | null
+          id?: string
+          mastering_tracks?: number | null
+          mastering_type?: string | null
+          mixing_scope?: string | null
+          payment_choice?: string | null
+          payment_status?: Database["public"]["Enums"]["payment_status"]
+          reference_url?: string | null
+          requested_date?: string | null
+          result_package?: string | null
+          result_package_price?: number
+          session_price?: number
+          session_type?: string | null
+          song_count?: string | null
+          status?: Database["public"]["Enums"]["booking_status"]
+          total_price?: number
+          track_count?: string | null
+          updated_at?: string
+        }
+        Update: {
+          add_ons?: Json | null
+          admin_notes?: string | null
+          created_at?: string
+          creative_types?: Json | null
+          custom_session_text?: string | null
+          customer_id?: string | null
+          deadline?: string | null
+          deposit_amount?: number
+          description?: string | null
+          id?: string
+          mastering_tracks?: number | null
+          mastering_type?: string | null
+          mixing_scope?: string | null
+          payment_choice?: string | null
+          payment_status?: Database["public"]["Enums"]["payment_status"]
+          reference_url?: string | null
+          requested_date?: string | null
+          result_package?: string | null
+          result_package_price?: number
+          session_price?: number
+          session_type?: string | null
+          song_count?: string | null
+          status?: Database["public"]["Enums"]["booking_status"]
+          total_price?: number
+          track_count?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "booking_requests_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      customers: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          name: string
+          notes: string | null
+          phone: string | null
+          status: Database["public"]["Enums"]["customer_status"]
+          total_spent: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          name: string
+          notes?: string | null
+          phone?: string | null
+          status?: Database["public"]["Enums"]["customer_status"]
+          total_spent?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          status?: Database["public"]["Enums"]["customer_status"]
+          total_spent?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          role: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id: string
+          role?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          role?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      project_status: {
+        Row: {
+          booking_request_id: string
+          file_link: string | null
+          file_notes: string | null
+          file_status: Database["public"]["Enums"]["file_status"]
+          id: string
+          status: Database["public"]["Enums"]["project_workflow_status"]
+          updated_at: string
+        }
+        Insert: {
+          booking_request_id: string
+          file_link?: string | null
+          file_notes?: string | null
+          file_status?: Database["public"]["Enums"]["file_status"]
+          id?: string
+          status?: Database["public"]["Enums"]["project_workflow_status"]
+          updated_at?: string
+        }
+        Update: {
+          booking_request_id?: string
+          file_link?: string | null
+          file_notes?: string | null
+          file_status?: Database["public"]["Enums"]["file_status"]
+          id?: string
+          status?: Database["public"]["Enums"]["project_workflow_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_status_booking_request_id_fkey"
+            columns: ["booking_request_id"]
+            isOneToOne: false
+            referencedRelation: "booking_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +218,32 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      booking_status:
+        | "new"
+        | "under_review"
+        | "approved"
+        | "counter_offer"
+        | "declined"
+        | "awaiting_payment"
+        | "paid"
+        | "confirmed"
+      customer_status: "new" | "returning" | "high_value"
+      file_status:
+        | "not_requested"
+        | "awaiting"
+        | "received"
+        | "reviewed"
+        | "ready"
+      payment_status: "unpaid" | "deposit_paid" | "fully_paid"
+      project_workflow_status:
+        | "awaiting_files"
+        | "files_received"
+        | "prep"
+        | "mixing"
+        | "mastering"
+        | "ready_for_delivery"
+        | "delivered"
+        | "completed"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +370,36 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      booking_status: [
+        "new",
+        "under_review",
+        "approved",
+        "counter_offer",
+        "declined",
+        "awaiting_payment",
+        "paid",
+        "confirmed",
+      ],
+      customer_status: ["new", "returning", "high_value"],
+      file_status: [
+        "not_requested",
+        "awaiting",
+        "received",
+        "reviewed",
+        "ready",
+      ],
+      payment_status: ["unpaid", "deposit_paid", "fully_paid"],
+      project_workflow_status: [
+        "awaiting_files",
+        "files_received",
+        "prep",
+        "mixing",
+        "mastering",
+        "ready_for_delivery",
+        "delivered",
+        "completed",
+      ],
+    },
   },
 } as const
