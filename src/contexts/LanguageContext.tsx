@@ -98,6 +98,25 @@ const translations: Record<Language, Record<string, string>> = {
     'booking.success.text': 'Din bokningsförfrågan är skickad. Du får snart en bekräftelse via e-post.',
     'booking.success.back': 'Tillbaka till startsidan',
 
+    // FAQ
+    'faq.title': 'Vanliga frågor',
+    'faq.difference.q': 'Vad är skillnaden mellan Studio Session och Producer Session?',
+    'faq.difference.a': 'I en Studio Session ansvarar jag för inspelning och teknisk kvalitet – du leder det kreativa. I en Producer Session arbetar vi aktivt tillsammans med låtens struktur, sound och arrangemang.',
+    'faq.duration.q': 'Hur lång tid tar en session?',
+    'faq.duration.a': 'Studio Session bokas i block om 4 eller 8 timmar. Producer Session bokas på samma sätt. Resultatpaket har sin egen tidsram beroende på paket.',
+    'faq.included.q': 'Vad ingår i priset?',
+    'faq.included.a': 'Alla sessioner inkluderar professionell studio, inspelning, teknisk hantering och fil-export. Producer Session inkluderar även aktiv produktion, arrangementstöd och kreativ riktning.',
+    'faq.delivery.q': 'Hur snabbt får jag leverans?',
+    'faq.delivery.a': 'Record Your Song levereras inom 5 arbetsdagar. Radio-Ready inom 14 arbetsdagar. EP Package enligt överenskommen tidsplan.',
+    'faq.trial.q': 'Kan jag boka en provtimme?',
+    'faq.trial.a': 'Just nu erbjuder vi inte enskilda provtimmar, men du kan boka ett kort samtal för att diskutera ditt projekt innan du bestämmer dig.',
+    'faq.equipment.q': 'Vilken utrustning används i studion?',
+    'faq.equipment.a': 'Vi arbetar med professionell inspelningsutrustning, högkvalitativa mikrofoner, preamps och monitorer i en akustiskt behandlad miljö.',
+    'faq.payment.q': 'Hur går betalningen till?',
+    'faq.payment.a': 'Timbaserade sessioner faktureras efter genomförd session. Resultatpaket faktureras enligt avtal – EP Package kräver 50% förskott.',
+    'faq.musicians.q': 'Kan jag ta med egna musiker?',
+    'faq.musicians.a': 'Absolut. Du är välkommen att ta med bandmedlemmar eller andra musiker till sessionen.',
+
     // Footer
     'footer.rights': 'Alla rättigheter förbehållna.',
   },
@@ -187,6 +206,25 @@ const translations: Record<Language, Record<string, string>> = {
     'booking.success.title': 'Thank you!',
     'booking.success.text': 'Your booking request has been submitted. You\'ll receive confirmation shortly.',
     'booking.success.back': 'Back to home',
+
+    // FAQ
+    'faq.title': 'Frequently Asked Questions',
+    'faq.difference.q': 'What is the difference between Studio Session and Producer Session?',
+    'faq.difference.a': 'In a Studio Session, I handle recording and technical quality – you lead the creative direction. In a Producer Session, we actively collaborate on the song\'s structure, sound and arrangement.',
+    'faq.duration.q': 'How long is a session?',
+    'faq.duration.a': 'Studio Sessions are booked in 4 or 8 hour blocks. Producer Sessions work the same way. Result Packages have their own timeline depending on the package.',
+    'faq.included.q': 'What is included in the price?',
+    'faq.included.a': 'All sessions include professional studio, recording, technical handling and file export. Producer Session also includes active production, arrangement support and creative direction.',
+    'faq.delivery.q': 'How fast do I get delivery?',
+    'faq.delivery.a': 'Record Your Song is delivered within 5 business days. Radio-Ready within 14 business days. EP Package per agreed timeline.',
+    'faq.trial.q': 'Can I book a trial session?',
+    'faq.trial.a': 'We don\'t currently offer single trial hours, but you can book a short call to discuss your project before committing.',
+    'faq.equipment.q': 'What equipment is used in the studio?',
+    'faq.equipment.a': 'We work with professional recording equipment, high-quality microphones, preamps and monitors in an acoustically treated environment.',
+    'faq.payment.q': 'How does payment work?',
+    'faq.payment.a': 'Hourly sessions are invoiced after the session. Result Packages are invoiced per agreement – EP Package requires 50% upfront.',
+    'faq.musicians.q': 'Can I bring my own musicians?',
+    'faq.musicians.a': 'Absolutely. You\'re welcome to bring band members or other musicians to the session.',
 
     // Footer
     'footer.rights': 'All rights reserved.',
