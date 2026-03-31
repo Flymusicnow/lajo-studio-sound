@@ -279,9 +279,43 @@ const RequestDetail = () => {
             )}
 
             {request.status === 'approved' && (
-              <Button onClick={() => updateStatus('awaiting_payment', undefined, 'payment_request')} className="w-full" size="sm">
-                <CreditCard className="mr-2 h-4 w-4" /> Skicka betalningslänk
-              </Button>
+              <>
+                <Button onClick={() => updateStatus('awaiting_payment', undefined, 'payment_request')} className="w-full" size="sm">
+                  <CreditCard className="mr-2 h-4 w-4" /> Skicka betalningslänk (mejl)
+                </Button>
+                <Button
+                  onClick={async () => {
+                    setStripeLoading(true);
+                    try {
+                      const customer = request.customers;
+                      const { data, error } = await supabase.functions.invoke('create-checkout', {
+                        body: {
+                          bookingRequestId: id,
+                          amount: request.deposit_amount,
+                          customerEmail: customer?.email,
+                          customerName: customer?.name,
+                        },
+                      });
+                      if (error) throw error;
+                      if (data?.url) {
+                        navigator.clipboard.writeText(data.url);
+                        toast({ title: 'Stripe-länk kopierad till urklipp' });
+                      }
+                    } catch (e) {
+                      toast({ title: 'Kunde inte skapa betalningslänk', variant: 'destructive' });
+                    } finally {
+                      setStripeLoading(false);
+                    }
+                  }}
+                  variant="outline"
+                  className="w-full"
+                  size="sm"
+                  disabled={stripeLoading}
+                >
+                  <DollarSign className="mr-2 h-4 w-4" />
+                  {stripeLoading ? 'Skapar...' : 'Skapa Stripe-betalningslänk'}
+                </Button>
+              </>
             )}
 
             {(request.status === 'awaiting_payment' || request.payment_status === 'unpaid') && (
