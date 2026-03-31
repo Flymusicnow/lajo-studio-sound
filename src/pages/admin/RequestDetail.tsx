@@ -5,7 +5,7 @@ import AdminLayout from '@/components/admin/AdminLayout';
 import StatusBadge from '@/components/admin/StatusBadge';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowLeft, CheckCircle, XCircle, CreditCard, FileCheck } from 'lucide-react';
+import { ArrowLeft, CheckCircle, XCircle, CreditCard, FileCheck, Mail, Upload, ExternalLink } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const RequestDetail = () => {
@@ -13,8 +13,10 @@ const RequestDetail = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [request, setRequest] = useState<any>(null);
+  const [projectStatus, setProjectStatus] = useState<any>(null);
   const [note, setNote] = useState('');
   const [loading, setLoading] = useState(true);
+  const [emailSending, setEmailSending] = useState('');
 
   const fetchRequest = async () => {
     const { data } = await supabase
@@ -26,17 +28,68 @@ const RequestDetail = () => {
       setRequest(data);
       setNote(data.admin_notes || '');
     }
+
+    const { data: ps } = await supabase
+      .from('project_status')
+      .select('*')
+      .eq('booking_request_id', id)
+      .maybeSingle();
+    setProjectStatus(ps);
+
     setLoading(false);
   };
 
   useEffect(() => { fetchRequest(); }, [id]);
 
-  const updateStatus = async (status: string, paymentStatus?: string) => {
+  const sendEmail = async (type: string, extraPayload: any = {}) => {
+    setEmailSending(type);
+    try {
+      const customer = request.customers;
+      await supabase.functions.invoke('send-studio-email', {
+        body: {
+          type,
+          email: customer?.email,
+          customerName: customer?.name || 'Kund',
+          bookingId: id,
+          totalPrice: request.total_price,
+          depositAmount: request.deposit_amount,
+          uploadUrl: `${window.location.origin}/upload/${id}`,
+          ...extraPayload,
+        },
+      });
+      toast({ title: 'E-post skickad' });
+    } catch (e) {
+      toast({ title: 'Kunde inte skicka e-post', variant: 'destructive' });
+    } finally {
+      setEmailSending('');
+    }
+  };
+
+  const updateStatus = async (status: string, paymentStatus?: string, emailType?: string) => {
     const updates: any = { status, updated_at: new Date().toISOString() };
     if (paymentStatus) updates.payment_status = paymentStatus;
     
     await supabase.from('booking_requests').update(updates).eq('id', id);
-    toast({ title: 'Status uppdaterad' });
+    
+    if (emailType) await sendEmail(emailType);
+    else toast({ title: 'Status uppdaterad' });
+    
+    fetchRequest();
+  };
+
+  const requestFiles = async () => {
+    if (!projectStatus) {
+      await supabase.from('project_status').insert({
+        booking_request_id: id,
+        file_status: 'awaiting',
+      });
+    } else {
+      await supabase.from('project_status').update({
+        file_status: 'awaiting',
+        updated_at: new Date().toISOString(),
+      }).eq('id', projectStatus.id);
+    }
+    await sendEmail('files_requested');
     fetchRequest();
   };
 
@@ -49,6 +102,13 @@ const RequestDetail = () => {
   if (!request) return <AdminLayout><p className="text-muted-foreground">Hittades inte.</p></AdminLayout>;
 
   const customer = request.customers;
+  const fileStatusLabels: Record<string, string> = {
+    not_requested: 'Ej begärda',
+    awaiting: 'Inväntar filer',
+    received: 'Mottagna',
+    reviewed: 'Granskade',
+    ready: 'Redo att starta',
+  };
 
   return (
     <AdminLayout>
@@ -125,6 +185,56 @@ const RequestDetail = () => {
             )}
           </div>
 
+          {/* File Status */}
+          <div className="bg-card border border-border rounded p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-serif font-semibold">Filer</h2>
+              {projectStatus?.file_status && (
+                <span className={`px-2.5 py-0.5 rounded-full text-xs font-sans font-medium ${
+                  projectStatus.file_status === 'received' ? 'bg-emerald-500/20 text-emerald-400' :
+                  projectStatus.file_status === 'awaiting' ? 'bg-amber-500/20 text-amber-400' :
+                  'bg-muted text-muted-foreground'
+                }`}>
+                  {fileStatusLabels[projectStatus.file_status] || projectStatus.file_status}
+                </span>
+              )}
+            </div>
+
+            {projectStatus?.file_link && (
+              <div className="mb-4">
+                <p className="text-sm text-muted-foreground font-sans mb-1">Fil/länk:</p>
+                {projectStatus.file_link.startsWith('http') ? (
+                  <a href={projectStatus.file_link} target="_blank" rel="noopener noreferrer" className="text-sm text-primary underline font-sans flex items-center gap-1">
+                    <ExternalLink size={14} /> {projectStatus.file_link}
+                  </a>
+                ) : (
+                  <p className="text-sm font-sans">{projectStatus.file_link}</p>
+                )}
+              </div>
+            )}
+
+            {projectStatus?.file_notes && (
+              <div className="mb-4">
+                <p className="text-sm text-muted-foreground font-sans mb-1">Kundanteckningar:</p>
+                <p className="text-sm font-sans bg-muted/30 rounded p-3">{projectStatus.file_notes}</p>
+              </div>
+            )}
+
+            <div className="flex flex-wrap gap-2">
+              <Button onClick={requestFiles} variant="outline" size="sm" disabled={emailSending === 'files_requested'}>
+                <Upload className="mr-2 h-4 w-4" />
+                {emailSending === 'files_requested' ? 'Skickar...' : 'Begär filer'}
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => window.open(`/upload/${id}`, '_blank')}
+              >
+                <ExternalLink className="mr-2 h-4 w-4" /> Visa uppladdningssida
+              </Button>
+            </div>
+          </div>
+
           {/* Notes */}
           <div className="bg-card border border-border rounded p-6">
             <h2 className="text-lg font-serif font-semibold mb-4">Interna anteckningar</h2>
@@ -150,27 +260,27 @@ const RequestDetail = () => {
             
             {request.status === 'new' && (
               <>
-                <Button onClick={() => updateStatus('approved')} className="w-full" size="sm">
-                  <CheckCircle className="mr-2 h-4 w-4" /> Godkänn
+                <Button onClick={() => updateStatus('approved', undefined, 'booking_approved')} className="w-full" size="sm">
+                  <CheckCircle className="mr-2 h-4 w-4" /> Godkänn + skicka mejl
                 </Button>
-                <Button onClick={() => updateStatus('declined')} variant="outline" className="w-full" size="sm">
-                  <XCircle className="mr-2 h-4 w-4" /> Neka
+                <Button onClick={() => updateStatus('declined', undefined, 'booking_declined')} variant="outline" className="w-full" size="sm">
+                  <XCircle className="mr-2 h-4 w-4" /> Neka + skicka mejl
                 </Button>
               </>
             )}
 
             {request.status === 'approved' && (
-              <Button onClick={() => updateStatus('awaiting_payment')} className="w-full" size="sm">
+              <Button onClick={() => updateStatus('awaiting_payment', undefined, 'payment_request')} className="w-full" size="sm">
                 <CreditCard className="mr-2 h-4 w-4" /> Skicka betalningslänk
               </Button>
             )}
 
             {(request.status === 'awaiting_payment' || request.payment_status === 'unpaid') && (
               <>
-                <Button onClick={() => updateStatus('paid', 'deposit_paid')} variant="outline" className="w-full" size="sm">
+                <Button onClick={() => updateStatus('paid', 'deposit_paid', 'payment_received')} variant="outline" className="w-full" size="sm">
                   Markera förskott betalt
                 </Button>
-                <Button onClick={() => updateStatus('paid', 'fully_paid')} variant="outline" className="w-full" size="sm">
+                <Button onClick={() => updateStatus('paid', 'fully_paid', 'payment_received')} variant="outline" className="w-full" size="sm">
                   Markera fullt betald
                 </Button>
               </>
@@ -181,6 +291,23 @@ const RequestDetail = () => {
                 <FileCheck className="mr-2 h-4 w-4" /> Bekräfta bokning
               </Button>
             )}
+          </div>
+
+          {/* Manual email */}
+          <div className="bg-card border border-border rounded p-6 space-y-2">
+            <h2 className="text-sm font-serif font-semibold mb-2 text-muted-foreground">Manuella mejl</h2>
+            <Button onClick={() => sendEmail('booking_approved')} variant="ghost" size="sm" className="w-full justify-start" disabled={!!emailSending}>
+              <Mail className="mr-2 h-4 w-4" /> Godkännande
+            </Button>
+            <Button onClick={() => sendEmail('payment_request')} variant="ghost" size="sm" className="w-full justify-start" disabled={!!emailSending}>
+              <Mail className="mr-2 h-4 w-4" /> Betalningsförfrågan
+            </Button>
+            <Button onClick={() => sendEmail('payment_received')} variant="ghost" size="sm" className="w-full justify-start" disabled={!!emailSending}>
+              <Mail className="mr-2 h-4 w-4" /> Betalningsbekräftelse
+            </Button>
+            <Button onClick={() => sendEmail('files_requested')} variant="ghost" size="sm" className="w-full justify-start" disabled={!!emailSending}>
+              <Mail className="mr-2 h-4 w-4" /> Filbegäran
+            </Button>
           </div>
         </div>
       </div>
