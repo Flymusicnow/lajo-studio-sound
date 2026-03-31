@@ -18,6 +18,7 @@ import RequestDetail from "./pages/admin/RequestDetail";
 import Customers from "./pages/admin/Customers";
 import CustomerDetail from "./pages/admin/CustomerDetail";
 import Calendar from "./pages/admin/Calendar";
+import Content from "./pages/admin/Content";
 import ProtectedRoute from "./components/admin/ProtectedRoute";
 
 const queryClient = new QueryClient();
