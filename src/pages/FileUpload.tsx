@@ -140,6 +140,7 @@ const FileUpload = () => {
 
       setUploadProgress(90);
 
+      // Email notification
       try {
         await supabase.functions.invoke('send-studio-email', {
           body: {
@@ -150,6 +151,17 @@ const FileUpload = () => {
         });
       } catch (e) {
         console.error('Email notification failed:', e);
+      }
+
+      // Telegram notification
+      try {
+        await supabase.functions.invoke('send-telegram', {
+          body: {
+            message: `📁 <b>Filer mottagna!</b>\n\n👤 ${(booking?.customers as any)?.name || 'Kund'}\n📎 ${file ? file.name : 'Extern länk'}\n🔗 Bokning: ${bookingId}`,
+          },
+        });
+      } catch (e) {
+        console.error('Telegram notification failed:', e);
       }
 
       setUploadProgress(100);
