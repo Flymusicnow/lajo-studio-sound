@@ -1,28 +1,22 @@
 import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Menu, X, Settings } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { language, setLanguage, t } = useLanguage();
   const location = useLocation();
+  const navigate = useNavigate();
 
   const navLinks = [
     { path: '/', label: t('nav.home') },
-    { path: '/#paket', label: t('nav.packages'), isAnchor: true },
+    { path: '/pricing', label: t('nav.packages') },
     { path: '/booking', label: t('nav.booking') },
     { path: '/quick-booking', label: t('nav.quickBooking') },
   ];
 
   const isActive = (path: string) => location.pathname === path;
-
-  const handleNavClick = (link: { path: string; isAnchor?: boolean }) => {
-    setIsMenuOpen(false);
-    if (link.isAnchor && location.pathname === '/') {
-      document.getElementById('paket')?.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
@@ -37,28 +31,17 @@ const Header = () => {
 
           <div className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
-              link.isAnchor ? (
-                <a
-                  key={link.path}
-                  href="#paket"
-                  onClick={() => handleNavClick(link)}
-                  className="text-sm font-sans tracking-wide transition-colors gold-underline text-muted-foreground hover:text-foreground cursor-pointer"
-                >
-                  {link.label}
-                </a>
-              ) : (
-                <Link
-                  key={link.path}
-                  to={link.path}
-                  className={`text-sm font-sans tracking-wide transition-colors gold-underline ${
-                    isActive(link.path) 
-                      ? 'text-primary' 
-                      : 'text-muted-foreground hover:text-foreground'
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              )
+              <Link
+                key={link.path}
+                to={link.path}
+                className={`text-sm font-sans tracking-wide transition-colors gold-underline ${
+                  isActive(link.path) 
+                    ? 'text-primary' 
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                {link.label}
+              </Link>
             ))}
             
             <div className="flex items-center gap-1 ml-4 text-sm">
@@ -80,6 +63,15 @@ const Header = () => {
                 EN
               </button>
             </div>
+
+            {/* Admin quick access */}
+            <button
+              onClick={() => navigate('/admin')}
+              className="text-muted-foreground/40 hover:text-muted-foreground transition-colors ml-2"
+              aria-label="Admin"
+            >
+              <Settings size={16} />
+            </button>
           </div>
 
           <button
@@ -95,27 +87,16 @@ const Header = () => {
           <div className="md:hidden mt-4 pb-4 border-t border-border/50 pt-4">
             <div className="flex flex-col gap-4">
               {navLinks.map((link) => (
-                link.isAnchor ? (
-                  <a
-                    key={link.path}
-                    href="#paket"
-                    onClick={() => handleNavClick(link)}
-                    className="text-lg font-sans transition-colors text-muted-foreground hover:text-foreground cursor-pointer"
-                  >
-                    {link.label}
-                  </a>
-                ) : (
-                  <Link
-                    key={link.path}
-                    to={link.path}
-                    onClick={() => setIsMenuOpen(false)}
-                    className={`text-lg font-sans transition-colors ${
-                      isActive(link.path) ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
-                    }`}
-                  >
-                    {link.label}
-                  </Link>
-                )
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  onClick={() => setIsMenuOpen(false)}
+                  className={`text-lg font-sans transition-colors ${
+                    isActive(link.path) ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  {link.label}
+                </Link>
               ))}
               
               <div className="flex items-center gap-2 mt-2 text-sm">

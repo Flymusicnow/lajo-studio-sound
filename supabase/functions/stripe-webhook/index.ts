@@ -75,6 +75,17 @@ serve(async (req) => {
             total_spent: (booking.customers.total_spent || 0) + (session.amount_total ? session.amount_total / 100 : 0),
             updated_at: new Date().toISOString(),
           }).eq("id", booking.customers.id);
+
+          // Telegram notification
+          try {
+            await supabase.functions.invoke("send-telegram", {
+              body: {
+                message: `💰 <b>Betalning mottagen!</b>\n\n👤 ${booking.customers.name}\n💳 ${session.amount_total ? (session.amount_total / 100).toLocaleString() : '?'} SEK`,
+              },
+            });
+          } catch (e) {
+            console.error("Telegram notification failed:", e);
+          }
         }
       }
     }

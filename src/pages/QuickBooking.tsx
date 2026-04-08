@@ -103,6 +103,17 @@ const QuickBooking = () => {
         console.error('Email notification failed:', e);
       }
 
+      // Telegram notification
+      try {
+        await supabase.functions.invoke('send-telegram', {
+          body: {
+            message: `⚡ <b>Snabbbokning!</b>\n\n👤 ${name}\n📧 ${email}\n🎹 ${selectedSession!.label}\n📅 ${format(selectedDate, 'yyyy-MM-dd')}\n💰 ${price.toLocaleString()} SEK`,
+          },
+        });
+      } catch (e) {
+        console.error('Telegram notification failed:', e);
+      }
+
       setIsSubmitted(true);
     } catch (err: any) {
       toast({

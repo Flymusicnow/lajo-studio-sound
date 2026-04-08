@@ -10,4 +10,6 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.stripe-webhook]
+
+[functions.send-telegram]
 verify_jwt = false

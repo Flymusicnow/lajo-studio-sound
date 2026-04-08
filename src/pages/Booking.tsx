@@ -129,6 +129,18 @@ const Booking = () => {
       };
 
       await supabase.functions.invoke('send-booking-email', { body: payload });
+
+      // Telegram notification
+      try {
+        await supabase.functions.invoke('send-telegram', {
+          body: {
+            message: `🎵 <b>Ny bokning!</b>\n\n👤 ${state.name}\n📧 ${state.email}\n🎹 ${t(`bb.s1.${state.session}`)}\n💰 ${total.toLocaleString()} SEK`,
+          },
+        });
+      } catch (e) {
+        console.error('Telegram notification failed:', e);
+      }
+
       setIsSubmitted(true);
     } catch (error: any) {
       console.error('Error sending booking:', error);
@@ -175,7 +187,7 @@ const Booking = () => {
             <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
               {/* Left: Steps */}
               <div>
-                <StepIndicator currentStep={state.step} totalSteps={TOTAL_STEPS} />
+                <StepIndicator currentStep={state.step} totalSteps={TOTAL_STEPS} onStepClick={(step) => dispatch({ type: 'SET_STEP', step })} />
                 <div className="bg-card border border-border rounded p-6 md:p-8">
                   {renderStep()}
                 </div>
