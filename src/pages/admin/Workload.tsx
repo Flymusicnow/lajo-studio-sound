@@ -11,6 +11,7 @@ interface ProjectCard {
   projectStatusId: string;
   customerName: string;
   sessionType: string;
+  workMode: string;
   deadline: string | null;
   estimatedHours: number;
   status: string;
@@ -35,7 +36,7 @@ const Workload = () => {
   const fetchProjects = async () => {
     const { data } = await supabase
       .from('project_status')
-      .select('id, status, booking_request_id, booking_requests(id, session_type, deadline, estimated_workload_hours, customer_id, customers(name))');
+      .select('id, status, booking_request_id, booking_requests(id, session_type, work_mode, deadline, estimated_workload_hours, customer_id, customers(name))');
 
     if (data) {
       const cards: ProjectCard[] = data.map(p => {
@@ -45,6 +46,7 @@ const Workload = () => {
           projectStatusId: p.id,
           customerName: br?.customers?.name || 'Okänd',
           sessionType: br?.session_type || '',
+          workMode: br?.work_mode || 'studio',
           deadline: br?.deadline || null,
           estimatedHours: br?.estimated_workload_hours || 0,
           status: p.status,
@@ -128,7 +130,9 @@ const Workload = () => {
                           <p className="text-sm font-sans font-medium">{card.customerName}</p>
                           <GripVertical size={14} className="text-muted-foreground flex-shrink-0 cursor-grab" />
                         </div>
-                        <p className="text-xs text-muted-foreground font-sans mb-2">{card.sessionType}</p>
+                        <p className="text-xs text-muted-foreground font-sans mb-2">
+                          {card.workMode === 'remote' ? '🏠 ' : ''}{card.sessionType}
+                        </p>
                         <div className="flex items-center justify-between">
                           {card.estimatedHours > 0 && (
                             <span className="text-xs text-muted-foreground font-sans">{card.estimatedHours}h</span>
