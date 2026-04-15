@@ -92,6 +92,7 @@ const Calendar = () => {
             onDateClick={handleDateClick}
             month={month}
             onMonthChange={setMonth}
+            slotCap={slotCap}
           />
           <p className="text-xs text-muted-foreground font-sans mt-4">Klicka på ett datum för att blockera/avblockera.</p>
         </div>

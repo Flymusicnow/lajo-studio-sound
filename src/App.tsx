@@ -21,6 +21,7 @@ import RequestDetail from "./pages/admin/RequestDetail";
 import Customers from "./pages/admin/Customers";
 import CustomerDetail from "./pages/admin/CustomerDetail";
 import Calendar from "./pages/admin/Calendar";
+import Workload from "./pages/admin/Workload";
 import Content from "./pages/admin/Content";
 import ProtectedRoute from "./components/admin/ProtectedRoute";
 
@@ -49,6 +50,7 @@ const App = () => (
               <Route path="/admin/customers" element={<ProtectedRoute><Customers /></ProtectedRoute>} />
               <Route path="/admin/customers/:id" element={<ProtectedRoute><CustomerDetail /></ProtectedRoute>} />
               <Route path="/admin/calendar" element={<ProtectedRoute><Calendar /></ProtectedRoute>} />
+              <Route path="/admin/workload" element={<ProtectedRoute><Workload /></ProtectedRoute>} />
               <Route path="/admin/content" element={<ProtectedRoute><Content /></ProtectedRoute>} />
               <Route path="/pricing" element={<Pricing />} />
               <Route path="*" element={<NotFound />} />

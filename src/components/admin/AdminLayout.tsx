@@ -1,17 +1,18 @@
-import { ReactNode } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { LayoutDashboard, FileText, Users, Calendar, LogOut, Menu, X, Palette } from 'lucide-react';
+import { LayoutDashboard, FileText, Users, Calendar, LogOut, Menu, X, Palette, Layers } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import NotificationBell from '@/components/admin/NotificationBell';
+import { supabase } from '@/integrations/supabase/client';
 
 const navItems = [
-  { label: 'Dashboard', icon: LayoutDashboard, path: '/admin' },
-  { label: 'Requests', icon: FileText, path: '/admin/requests' },
-  { label: 'Customers', icon: Users, path: '/admin/customers' },
-  { label: 'Calendar', icon: Calendar, path: '/admin/calendar' },
+  { label: 'Översikt', icon: LayoutDashboard, path: '/admin' },
+  { label: 'Förfrågningar', icon: FileText, path: '/admin/requests' },
+  { label: 'Workload', icon: Layers, path: '/admin/workload' },
+  { label: 'Kunder', icon: Users, path: '/admin/customers' },
+  { label: 'Kalender', icon: Calendar, path: '/admin/calendar' },
   { label: 'Innehåll', icon: Palette, path: '/admin/content' },
 ];
 
@@ -20,6 +21,24 @@ const AdminLayout = ({ children }: { children: ReactNode }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [capacityLabel, setCapacityLabel] = useState('');
+
+  useEffect(() => {
+    const fetchCapacity = async () => {
+      const now = new Date();
+      const monthStart = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-01`;
+      const [{ data: settings }, { data: bookings }] = await Promise.all([
+        supabase.from('studio_settings').select('monthly_slot_cap').eq('id', 1).single(),
+        supabase.from('booking_requests').select('id')
+          .in('status', ['confirmed', 'paid', 'in_progress'])
+          .gte('created_at', monthStart),
+      ]);
+      const cap = settings?.monthly_slot_cap || 7;
+      const used = bookings?.length || 0;
+      setCapacityLabel(`${used}/${cap} slots`);
+    };
+    fetchCapacity();
+  }, []);
 
   const handleNav = (path: string) => {
     navigate(path);
@@ -33,28 +52,37 @@ const AdminLayout = ({ children }: { children: ReactNode }) => {
         <div className="p-6 border-b border-border flex items-center justify-between">
           <div>
             <h1 className="text-primary font-serif text-lg font-semibold tracking-wide">TOPLINER</h1>
-            <p className="text-xs text-muted-foreground font-sans mt-1">Studio Admin</p>
+            <p className="text-xs text-muted-foreground font-sans mt-1">Studio OS</p>
           </div>
           <NotificationBell />
         </div>
         <nav className="flex-1 p-4 space-y-1">
-          {navItems.map((item) => (
-            <button
-              key={item.path}
-              onClick={() => handleNav(item.path)}
-              className={cn(
-                'w-full flex items-center gap-3 px-4 py-3 rounded text-sm font-sans transition-colors',
-                location.pathname === item.path
-                  ? 'bg-primary/10 text-primary'
-                  : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
-              )}
-            >
-              <item.icon size={18} />
-              {item.label}
-            </button>
-          ))}
+          {navItems.map((item) => {
+            const active = location.pathname === item.path || 
+              (item.path !== '/admin' && location.pathname.startsWith(item.path));
+            return (
+              <button
+                key={item.path}
+                onClick={() => handleNav(item.path)}
+                className={cn(
+                  'w-full flex items-center gap-3 px-4 py-3 rounded text-sm font-sans transition-colors',
+                  active
+                    ? 'bg-primary/10 text-primary border-l-2 border-primary'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+                )}
+              >
+                <item.icon size={18} />
+                {item.label}
+              </button>
+            );
+          })}
         </nav>
-        <div className="p-4 border-t border-border">
+        <div className="p-4 border-t border-border space-y-3">
+          {capacityLabel && (
+            <div className="px-4 py-2 text-xs font-sans text-muted-foreground bg-muted/30 rounded text-center">
+              📊 {capacityLabel}
+            </div>
+          )}
           <button
             onClick={() => signOut()}
             className="w-full flex items-center gap-3 px-4 py-3 rounded text-sm font-sans text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
@@ -69,9 +97,12 @@ const AdminLayout = ({ children }: { children: ReactNode }) => {
       <div className="flex-1 flex flex-col">
         <header className="lg:hidden flex items-center justify-between p-4 border-b border-border bg-card">
           <h1 className="text-primary font-serif text-lg font-semibold">TOPLINER</h1>
-          <Button variant="ghost" size="icon" onClick={() => setMobileOpen(!mobileOpen)}>
-            {mobileOpen ? <X size={20} /> : <Menu size={20} />}
-          </Button>
+          <div className="flex items-center gap-2">
+            <NotificationBell />
+            <Button variant="ghost" size="icon" onClick={() => setMobileOpen(!mobileOpen)}>
+              {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+            </Button>
+          </div>
         </header>
 
         {/* Mobile nav overlay */}
@@ -84,21 +115,24 @@ const AdminLayout = ({ children }: { children: ReactNode }) => {
               </Button>
             </div>
             <nav className="p-4 space-y-2">
-              {navItems.map((item) => (
-                <button
-                  key={item.path}
-                  onClick={() => handleNav(item.path)}
-                  className={cn(
-                    'w-full flex items-center gap-3 px-4 py-4 rounded text-base font-sans transition-colors',
-                    location.pathname === item.path
-                      ? 'bg-primary/10 text-primary'
-                      : 'text-muted-foreground hover:text-foreground'
-                  )}
-                >
-                  <item.icon size={20} />
-                  {item.label}
-                </button>
-              ))}
+              {navItems.map((item) => {
+                const active = location.pathname === item.path;
+                return (
+                  <button
+                    key={item.path}
+                    onClick={() => handleNav(item.path)}
+                    className={cn(
+                      'w-full flex items-center gap-3 px-4 py-4 rounded text-base font-sans transition-colors',
+                      active
+                        ? 'bg-primary/10 text-primary border-l-2 border-primary'
+                        : 'text-muted-foreground hover:text-foreground'
+                    )}
+                  >
+                    <item.icon size={20} />
+                    {item.label}
+                  </button>
+                );
+              })}
               <button
                 onClick={() => signOut()}
                 className="w-full flex items-center gap-3 px-4 py-4 rounded text-base font-sans text-muted-foreground hover:text-foreground transition-colors"
