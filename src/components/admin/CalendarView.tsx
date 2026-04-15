@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import { ChevronLeft, ChevronRight, Lock, Music } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -15,17 +15,18 @@ interface CalendarViewProps {
   onDateClick: (date: string) => void;
   month: Date;
   onMonthChange: (date: Date) => void;
+  slotCap?: number;
 }
 
 const WEEKDAYS = ['Mån', 'Tis', 'Ons', 'Tor', 'Fre', 'Lör', 'Sön'];
 
-const CalendarView = ({ events, onDateClick, month, onMonthChange }: CalendarViewProps) => {
+const CalendarView = ({ events, onDateClick, month, onMonthChange, slotCap }: CalendarViewProps) => {
   const year = month.getFullYear();
   const m = month.getMonth();
 
   const firstDay = new Date(year, m, 1);
   const lastDay = new Date(year, m + 1, 0);
-  const startDayOfWeek = (firstDay.getDay() + 6) % 7; // Monday = 0
+  const startDayOfWeek = (firstDay.getDay() + 6) % 7;
   const daysInMonth = lastDay.getDate();
 
   const cells = useMemo(() => {
@@ -47,14 +48,36 @@ const CalendarView = ({ events, onDateClick, month, onMonthChange }: CalendarVie
   };
 
   const today = new Date().toISOString().split('T')[0];
+  const totalBookings = events.filter(e => e.type === 'booking').length;
 
   const prevMonth = () => onMonthChange(new Date(year, m - 1, 1));
   const nextMonth = () => onMonthChange(new Date(year, m + 1, 1));
 
   const monthName = month.toLocaleDateString('sv-SE', { month: 'long', year: 'numeric' });
 
+  const capacityPct = slotCap ? Math.min((totalBookings / slotCap) * 100, 100) : 0;
+
   return (
     <div>
+      {/* Capacity bar */}
+      {slotCap && (
+        <div className="mb-4 p-3 bg-muted/20 rounded">
+          <div className="flex justify-between text-xs font-sans text-muted-foreground mb-1.5">
+            <span>Kapacitet denna månad</span>
+            <span className="font-medium text-foreground">{totalBookings} / {slotCap}</span>
+          </div>
+          <div className="h-2 bg-muted/50 rounded-full overflow-hidden">
+            <div
+              className={cn(
+                'h-full rounded-full transition-all',
+                capacityPct >= 90 ? 'bg-red-500' : capacityPct >= 70 ? 'bg-amber-500' : 'bg-primary'
+              )}
+              style={{ width: `${capacityPct}%` }}
+            />
+          </div>
+        </div>
+      )}
+
       <div className="flex items-center justify-between mb-4">
         <Button variant="ghost" size="icon" onClick={prevMonth}>
           <ChevronLeft size={18} />
@@ -76,7 +99,8 @@ const CalendarView = ({ events, onDateClick, month, onMonthChange }: CalendarVie
           const dateStr = getDateStr(day);
           const dayEvents = getEventsForDay(day);
           const isBlocked = dayEvents.some(e => e.type === 'blocked');
-          const hasBooking = dayEvents.some(e => e.type === 'booking');
+          const bookingCount = dayEvents.filter(e => e.type === 'booking').length;
+          const hasBooking = bookingCount > 0;
           const isToday = dateStr === today;
           const isPast = dateStr < today;
 
@@ -89,7 +113,7 @@ const CalendarView = ({ events, onDateClick, month, onMonthChange }: CalendarVie
                 isPast && 'opacity-40',
                 isToday && 'ring-1 ring-primary',
                 isBlocked && 'bg-red-500/10 text-red-400',
-                hasBooking && !isBlocked && 'bg-primary/10 text-primary',
+                hasBooking && !isBlocked && bookingCount >= 2 ? 'bg-primary/25 text-primary' : hasBooking && !isBlocked && 'bg-primary/10 text-primary',
                 !isBlocked && !hasBooking && 'hover:bg-muted/50',
               )}
             >
@@ -97,6 +121,7 @@ const CalendarView = ({ events, onDateClick, month, onMonthChange }: CalendarVie
               <div className="flex gap-0.5 mt-0.5">
                 {isBlocked && <Lock size={10} className="text-red-400" />}
                 {hasBooking && <Music size={10} className="text-primary" />}
+                {bookingCount > 1 && <span className="text-[9px] text-primary font-medium">×{bookingCount}</span>}
               </div>
             </button>
           );
