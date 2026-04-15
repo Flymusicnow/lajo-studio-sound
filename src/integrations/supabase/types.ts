@@ -65,6 +65,7 @@ export type Database = {
           total_price: number
           track_count: string | null
           updated_at: string
+          work_mode: string
         }
         Insert: {
           add_ons?: Json | null
@@ -95,6 +96,7 @@ export type Database = {
           total_price?: number
           track_count?: string | null
           updated_at?: string
+          work_mode?: string
         }
         Update: {
           add_ons?: Json | null
@@ -125,6 +127,7 @@ export type Database = {
           total_price?: number
           track_count?: string | null
           updated_at?: string
+          work_mode?: string
         }
         Relationships: [
           {

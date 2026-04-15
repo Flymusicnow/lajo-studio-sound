@@ -1,0 +1,1 @@
+ALTER TABLE public.booking_requests ADD COLUMN work_mode text NOT NULL DEFAULT 'studio';
