@@ -21,6 +21,7 @@ export const SESSIONS: SessionOption[] = [
   { id: '4h', price: 4500, baseHours: 4 },
   { id: '8h', price: 8500, baseHours: 8 },
   { id: 'custom', price: 0, isCustom: true, baseHours: 4 },
+  { id: 'remote', price: 0, isCustom: false, baseHours: 0 },
 ];
 
 export const ADDONS: AddOn[] = [
@@ -53,6 +54,7 @@ export const MIXING_SCOPES = ['0-20', '20-50', '50+'] as const;
 
 export type BookingState = {
   step: number;
+  workMode: 'studio' | 'remote' | '';
   session: string;
   customSessionText: string;
   creativeTypes: string[];
@@ -76,6 +78,7 @@ export type BookingState = {
 
 export const initialBookingState: BookingState = {
   step: 1,
+  workMode: '',
   session: '',
   customSessionText: '',
   creativeTypes: [],
@@ -99,6 +102,7 @@ export const initialBookingState: BookingState = {
 
 export type BookingAction =
   | { type: 'SET_STEP'; step: number }
+  | { type: 'SET_WORK_MODE'; workMode: 'studio' | 'remote' }
   | { type: 'SET_SESSION'; session: string }
   | { type: 'SET_CUSTOM_SESSION_TEXT'; text: string }
   | { type: 'TOGGLE_CREATIVE_TYPE'; id: string }
@@ -115,6 +119,8 @@ export function bookingReducer(state: BookingState, action: BookingAction): Book
   switch (action.type) {
     case 'SET_STEP':
       return { ...state, step: action.step };
+    case 'SET_WORK_MODE':
+      return { ...state, workMode: action.workMode };
     case 'SET_SESSION':
       return { ...state, session: action.session };
     case 'SET_CUSTOM_SESSION_TEXT':
