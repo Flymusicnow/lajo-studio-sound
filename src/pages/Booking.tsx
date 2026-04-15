@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Loader2, ArrowLeft, ArrowRight } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { bookingReducer, initialBookingState, calculateTotal, SESSIONS, ADDONS, RESULT_PACKAGES, MASTERING_PRICE_PER_TRACK } from '@/components/booking/bookingConfig';
+import { bookingReducer, initialBookingState, calculateTotal, calculateWorkloadHours, SESSIONS, ADDONS, RESULT_PACKAGES, MASTERING_PRICE_PER_TRACK } from '@/components/booking/bookingConfig';
 import StepIndicator from '@/components/booking/StepIndicator';
 import SessionStep from '@/components/booking/SessionStep';
 import CreativeTypeStep from '@/components/booking/CreativeTypeStep';
@@ -87,6 +87,8 @@ const Booking = () => {
         if (newCustomer) customerId = newCustomer.id;
       }
 
+      const workloadHours = calculateWorkloadHours(state);
+
       // Insert booking request
       await supabase.from('booking_requests').insert({
         customer_id: customerId,
@@ -108,6 +110,8 @@ const Booking = () => {
         deadline: state.deadline?.toISOString().split('T')[0] || null,
         description: state.description || null,
         custom_session_text: state.customSessionText || null,
+        promo_code: state.promoCode || null,
+        estimated_workload_hours: workloadHours,
       });
 
       // Send email notification
