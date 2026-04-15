@@ -1,40 +1,83 @@
 
 
-# Fix: Admin Login Redirect + Email Message
+# Add Remote Services to Topliner Production
 
-## Problem
-1. **Signup works but doesn't redirect** — Auto-confirm is enabled, so signup immediately returns a session with access_token. But the code shows "Kolla din e-post" message instead of redirecting to `/admin`.
-2. **First login attempts failed** — The user hadn't signed up yet. The credentials `Totalsuccess2026` and `Totalsuccess2026$` both failed because no account existed. After signing up with `Totalsuccess2026$`, the account was created successfully.
-3. **User is now locked out** — The signup success screen tells them to check email, but no verification email is needed (auto-confirm is on).
+## Overview
+Extend the business to clearly support both in-studio and remote clients. This touches the website (new section), booking flow (new first step), database (new column), and admin (visible label).
 
-## Solution
+## Changes
 
-### Fix `src/pages/admin/Login.tsx`
-When signup returns a session (access_token present), redirect directly to `/admin` instead of showing the email verification message.
+### 1. Website — New "Remote" Section
+**New file: `src/components/RemoteServices.tsx`**
 
-```typescript
-// In handleSubmit, after signUp:
-const { data, error } = await signUp(email, password);
-if (error) {
-  setError(error.message || 'Kunde inte skapa konto.');
-} else if (data?.session) {
-  // Auto-confirm is on — user already has a session
-  navigate('/admin');
-} else {
-  // Email verification required
-  setSignUpSuccess(true);
-}
+A dedicated section placed after ThreeWays on the homepage. Headline: "Work with us from anywhere" (EN) / "Jobba med oss var du än befinner dig" (SV). Lists remote services: Mixing, Mastering, Production help, Topline/vocal production, Track development. CTA links to `/booking?mode=remote`.
+
+**Edit: `src/pages/Index.tsx`** — Add `<RemoteServices />` after ThreeWays.
+
+### 2. Booking Flow — New Step 0: Work Mode
+**New file: `src/components/booking/WorkModeStep.tsx`**
+
+Two selectable cards:
+- **I studion** / **In studio** — microphone icon
+- **Remote / Skicka filer** / **Remote / Send files** — globe icon
+
+This becomes Step 1. All existing steps shift +1 (total becomes 9).
+
+**Edit: `src/components/booking/bookingConfig.ts`**:
+- Add `workMode: 'studio' | 'remote' | ''` to `BookingState` and initial state
+- Add `SET_WORK_MODE` action
+- Update reducer
+
+**Edit: `src/pages/Booking.tsx`**:
+- `TOTAL_STEPS = 9`
+- Insert WorkModeStep at step 1, shift all others
+- When `workMode === 'remote'`: skip SessionStep (step 2) — session not applicable, auto-set to `'remote'`
+- Adjust `canProceed` for new step numbering
+- Include `work_mode` in the Supabase insert and email payload
+- Update Telegram notification to show 🏠 Remote or 🎙 Studio
+
+### 3. Conditional Booking Logic
+When remote is selected:
+- **Step 2 (Session)**: Skipped — no studio session needed. Auto-set `session = 'remote'`
+- **Step 3 (Creative Types)**: Show all, but labels feel remote-appropriate (already fine: mixing, topline, etc.)
+- **Step 5 (Result Package)**: Hide "Session Only" option (irrelevant for remote)
+- **Confirmation page**: Show message about file upload instructions coming via email
+
+### 4. Database — Add `work_mode` Column
+**Migration**: Add `work_mode text default 'studio'` to `booking_requests`.
+
+### 5. Admin — Show Work Mode Badge
+**Edit: `src/pages/admin/RequestDetail.tsx`** — Show "🏠 Remote" or "🎙 Studio" badge near the top.
+**Edit: `src/pages/admin/Requests.tsx`** — Add work mode indicator in the list view.
+**Edit: `src/pages/admin/Workload.tsx`** — Show icon on Kanban cards.
+
+### 6. Translations
+**Edit: `src/contexts/LanguageContext.tsx`** — Add ~25 keys:
+- `remote.title`, `remote.subtitle`, `remote.desc`, `remote.service.mixing`, etc.
+- `bb.s0.title`, `bb.s0.sub`, `bb.s0.studio`, `bb.s0.studio.desc`, `bb.s0.remote`, `bb.s0.remote.desc`
+- `bb.confirm.remote.note`
+
+### 7. Add `'remote'` session to config
+**Edit: `src/components/booking/bookingConfig.ts`** — Add `{ id: 'remote', price: 0, isCustom: false, baseHours: 0 }` to SESSIONS so pricing logic handles it.
+
+## Files
+
+```
+NEW:  src/components/RemoteServices.tsx
+NEW:  src/components/booking/WorkModeStep.tsx
+EDIT: src/pages/Index.tsx                    — add RemoteServices section
+EDIT: src/components/booking/bookingConfig.ts — workMode state + remote session
+EDIT: src/pages/Booking.tsx                   — 9 steps, skip logic, work_mode in DB
+EDIT: src/contexts/LanguageContext.tsx         — ~25 translation keys
+EDIT: src/pages/admin/RequestDetail.tsx        — show work mode badge
+EDIT: src/pages/admin/Requests.tsx             — work mode in list
+EDIT: src/pages/admin/Workload.tsx             — icon on kanban cards
+MIGRATION: add work_mode column to booking_requests
 ```
 
-### Check `useAuth.tsx` signUp return type
-Ensure the `signUp` function returns `{ data, error }` so we can check for `data.session`.
-
-## Files Changed
-```
-EDIT: src/pages/admin/Login.tsx — redirect on auto-confirmed signup
-EDIT: src/hooks/useAuth.tsx     — ensure signUp returns data (if needed)
-```
-
-## Immediate workaround
-The user already has a valid session from signup. They should be able to navigate directly to `/admin` right now — the session is stored in localStorage. If the page was refreshed, they can log in with `lajomou@gmail.com` / `Totalsuccess2026$` (the password used during successful signup).
+## Technical Notes
+- Remote bookings skip step 2 (session selection) by auto-advancing and setting `session = 'remote'`
+- `calculateTotal` already handles `session.price = 0` correctly
+- The `work_mode` column defaults to `'studio'` so all existing bookings remain unaffected
+- URL param `?mode=remote` from the CTA pre-selects remote in WorkModeStep
 
