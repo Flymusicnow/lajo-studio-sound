@@ -1,4 +1,5 @@
-import { useReducer, useState } from 'react';
+import { useReducer, useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
@@ -7,6 +8,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { bookingReducer, initialBookingState, calculateTotal, calculateWorkloadHours, SESSIONS, ADDONS, RESULT_PACKAGES, MASTERING_PRICE_PER_TRACK } from '@/components/booking/bookingConfig';
 import StepIndicator from '@/components/booking/StepIndicator';
+import WorkModeStep from '@/components/booking/WorkModeStep';
 import SessionStep from '@/components/booking/SessionStep';
 import CreativeTypeStep from '@/components/booking/CreativeTypeStep';
 import AddOnsStep from '@/components/booking/AddOnsStep';
@@ -18,42 +20,67 @@ import ReviewStep from '@/components/booking/ReviewStep';
 import PriceSummary from '@/components/booking/PriceSummary';
 import BookingConfirmation from '@/components/booking/BookingConfirmation';
 
-const TOTAL_STEPS = 8;
+const TOTAL_STEPS = 9;
 
 const Booking = () => {
   const { t, language } = useLanguage();
   const { toast } = useToast();
+  const [searchParams] = useSearchParams();
   const [state, dispatch] = useReducer(bookingReducer, initialBookingState);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  // Pre-select remote from URL param
+  useEffect(() => {
+    if (searchParams.get('mode') === 'remote' && !state.workMode) {
+      dispatch({ type: 'SET_WORK_MODE', workMode: 'remote' });
+    }
+  }, [searchParams]);
+
+  const isRemote = state.workMode === 'remote';
+
   const total = calculateTotal(state);
   const deposit = Math.round(total / 2);
 
+  // For remote, step 2 (session) is skipped
+  const getEffectiveStep = () => state.step;
+
   const canProceed = (): boolean => {
     switch (state.step) {
-      case 1: return !!state.session;
-      case 2: return state.creativeTypes.length > 0;
-      case 3: return true; // optional
-      case 4: return true; // optional
-      case 5: return !!state.resultPackage;
-      case 6: return !!state.mixingScope;
-      case 7: return !!state.name && !!state.email;
-      case 8: return true;
+      case 1: return !!state.workMode;
+      case 2: return isRemote ? true : !!state.session; // auto-skip for remote
+      case 3: return state.creativeTypes.length > 0;
+      case 4: return true; // add-ons optional
+      case 5: return true; // mastering optional
+      case 6: return !!state.resultPackage;
+      case 7: return !!state.mixingScope;
+      case 8: return !!state.name && !!state.email;
+      case 9: return true;
       default: return false;
     }
   };
 
   const next = () => {
     if (state.step < TOTAL_STEPS && canProceed()) {
-      dispatch({ type: 'SET_STEP', step: state.step + 1 });
+      let nextStep = state.step + 1;
+      // Skip session step for remote
+      if (nextStep === 2 && isRemote) {
+        dispatch({ type: 'SET_SESSION', session: 'remote' });
+        nextStep = 3;
+      }
+      dispatch({ type: 'SET_STEP', step: nextStep });
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
   const prev = () => {
     if (state.step > 1) {
-      dispatch({ type: 'SET_STEP', step: state.step - 1 });
+      let prevStep = state.step - 1;
+      // Skip session step for remote
+      if (prevStep === 2 && isRemote) {
+        prevStep = 1;
+      }
+      dispatch({ type: 'SET_STEP', step: prevStep });
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
@@ -68,7 +95,6 @@ const Booking = () => {
         return { id, label: t(`bb.s3.${id === 'sound-design' ? 'sound' : id === 'extra-revision' ? 'revision' : id}`), price: addon?.price || 0 };
       });
 
-      // Find or create customer
       let customerId: string | null = null;
       const { data: existingCustomer } = await supabase
         .from('customers')
@@ -89,9 +115,9 @@ const Booking = () => {
 
       const workloadHours = calculateWorkloadHours(state);
 
-      // Insert booking request
       await supabase.from('booking_requests').insert({
         customer_id: customerId,
+        work_mode: state.workMode || 'studio',
         session_type: state.session,
         session_price: session?.price || 0,
         creative_types: state.creativeTypes,
@@ -114,13 +140,13 @@ const Booking = () => {
         estimated_workload_hours: workloadHours,
       });
 
-      // Send email notification
       const payload = {
         language,
         name: state.name,
         email: state.email,
         phone: state.phone,
-        session: { id: state.session, label: t(`bb.s1.${state.session}`), price: session?.price || 0, customText: state.customSessionText },
+        workMode: state.workMode,
+        session: { id: state.session, label: state.session === 'remote' ? 'Remote' : t(`bb.s1.${state.session}`), price: session?.price || 0, customText: state.customSessionText },
         creativeTypes: state.creativeTypes.map(ct => t(`bb.s2.${ct === 'new-song' ? 'new' : ct === 'develop-existing' ? 'develop' : ct === 'beat-production' ? 'beat' : ct}`)),
         addOns: selectedAddons,
         mastering: { type: state.mastering, tracks: state.masteringTracks, pricePerTrack: MASTERING_PRICE_PER_TRACK },
@@ -134,11 +160,11 @@ const Booking = () => {
 
       await supabase.functions.invoke('send-booking-email', { body: payload });
 
-      // Telegram notification
       try {
+        const modeIcon = isRemote ? '🏠' : '🎙';
         await supabase.functions.invoke('send-telegram', {
           body: {
-            message: `🎵 <b>Ny bokning!</b>\n\n👤 ${state.name}\n📧 ${state.email}\n🎹 ${t(`bb.s1.${state.session}`)}\n💰 ${total.toLocaleString()} SEK`,
+            message: `🎵 <b>Ny bokning!</b>\n\n${modeIcon} ${isRemote ? 'Remote' : 'Studio'}\n👤 ${state.name}\n📧 ${state.email}\n🎹 ${state.session === 'remote' ? 'Remote' : t(`bb.s1.${state.session}`)}\n💰 ${total.toLocaleString()} SEK`,
           },
         });
       } catch (e) {
@@ -158,18 +184,19 @@ const Booking = () => {
     }
   };
 
-  if (isSubmitted) return <BookingConfirmation />;
+  if (isSubmitted) return <BookingConfirmation isRemote={isRemote} />;
 
   const renderStep = () => {
     switch (state.step) {
-      case 1: return <SessionStep state={state} dispatch={dispatch} />;
-      case 2: return <CreativeTypeStep state={state} dispatch={dispatch} />;
-      case 3: return <AddOnsStep state={state} dispatch={dispatch} />;
-      case 4: return <MasteringStep state={state} dispatch={dispatch} />;
-      case 5: return <ResultPackageStep state={state} dispatch={dispatch} />;
-      case 6: return <MixingScopeStep state={state} dispatch={dispatch} />;
-      case 7: return <DetailsStep state={state} dispatch={dispatch} />;
-      case 8: return <ReviewStep state={state} />;
+      case 1: return <WorkModeStep state={state} dispatch={dispatch} />;
+      case 2: return <SessionStep state={state} dispatch={dispatch} />;
+      case 3: return <CreativeTypeStep state={state} dispatch={dispatch} />;
+      case 4: return <AddOnsStep state={state} dispatch={dispatch} />;
+      case 5: return <MasteringStep state={state} dispatch={dispatch} />;
+      case 6: return <ResultPackageStep state={state} dispatch={dispatch} isRemote={isRemote} />;
+      case 7: return <MixingScopeStep state={state} dispatch={dispatch} />;
+      case 8: return <DetailsStep state={state} dispatch={dispatch} />;
+      case 9: return <ReviewStep state={state} />;
       default: return null;
     }
   };
@@ -189,40 +216,29 @@ const Booking = () => {
 
           <div className="max-w-5xl mx-auto">
             <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
-              {/* Left: Steps */}
               <div>
-                <StepIndicator currentStep={state.step} totalSteps={TOTAL_STEPS} onStepClick={(step) => dispatch({ type: 'SET_STEP', step })} />
+                <StepIndicator currentStep={state.step} totalSteps={TOTAL_STEPS} onStepClick={(step) => {
+                  // Prevent navigating to session step if remote
+                  if (step === 2 && isRemote) return;
+                  dispatch({ type: 'SET_STEP', step });
+                }} />
                 <div className="bg-card border border-border rounded p-6 md:p-8">
                   {renderStep()}
                 </div>
 
-                {/* Navigation */}
                 <div className="flex justify-between mt-6">
-                  <Button
-                    variant="outline"
-                    onClick={prev}
-                    disabled={state.step === 1}
-                    className="border-border"
-                  >
+                  <Button variant="outline" onClick={prev} disabled={state.step === 1} className="border-border">
                     <ArrowLeft className="mr-2 h-4 w-4" />
                     {t('bb.nav.back')}
                   </Button>
 
                   {state.step < TOTAL_STEPS ? (
-                    <Button
-                      onClick={next}
-                      disabled={!canProceed()}
-                      className="bg-primary text-primary-foreground hover:bg-primary/90 gold-glow"
-                    >
+                    <Button onClick={next} disabled={!canProceed()} className="bg-primary text-primary-foreground hover:bg-primary/90 gold-glow">
                       {t('bb.nav.next')}
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   ) : (
-                    <Button
-                      onClick={handleSubmit}
-                      disabled={isLoading || !state.name || !state.email}
-                      className="bg-primary text-primary-foreground hover:bg-primary/90 gold-glow px-8"
-                    >
+                    <Button onClick={handleSubmit} disabled={isLoading || !state.name || !state.email} className="bg-primary text-primary-foreground hover:bg-primary/90 gold-glow px-8">
                       {isLoading ? (
                         <><Loader2 className="mr-2 h-4 w-4 animate-spin" />{t('bb.nav.sending')}</>
                       ) : (
@@ -232,15 +248,13 @@ const Booking = () => {
                   )}
                 </div>
 
-                {/* Almost done nudge */}
-                {state.step >= 6 && state.step < 8 && (
+                {state.step >= 7 && state.step < 9 && (
                   <p className="text-center text-sm font-sans text-muted-foreground mt-4">
                     ✨ {t('bb.nudge.almost')}
                   </p>
                 )}
               </div>
 
-              {/* Right: Sticky Price Summary */}
               <div className="hidden lg:block">
                 <div className="sticky top-24">
                   <PriceSummary state={state} />
@@ -248,7 +262,6 @@ const Booking = () => {
               </div>
             </div>
 
-            {/* Mobile: Fixed bottom price bar */}
             <div className="fixed bottom-0 left-0 right-0 lg:hidden bg-card border-t border-border p-4 z-50">
               <div className="flex justify-between items-center">
                 <div>
@@ -266,7 +279,6 @@ const Booking = () => {
           </div>
         </div>
       </section>
-      {/* Spacer for mobile bottom bar */}
       <div className="h-20 lg:hidden" />
     </Layout>
   );

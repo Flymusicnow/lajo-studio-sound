@@ -6,6 +6,7 @@ import type { BookingState, BookingAction } from './bookingConfig';
 interface Props {
   state: BookingState;
   dispatch: React.Dispatch<BookingAction>;
+  isRemote?: boolean;
 }
 
 interface PackageDetail {
@@ -17,7 +18,7 @@ interface PackageDetail {
   notIncluded: string[];
 }
 
-const ResultPackageStep = ({ state, dispatch }: Props) => {
+const ResultPackageStep = ({ state, dispatch, isRemote }: Props) => {
   const { t } = useLanguage();
 
   const packages: PackageDetail[] = [
@@ -62,7 +63,7 @@ const ResultPackageStep = ({ state, dispatch }: Props) => {
       <p className="text-muted-foreground/70 font-sans text-xs italic mb-6">{t('bb.s5.explain')} {t('bb.s5.includesNote')}</p>
 
       <div className="grid gap-4">
-        {packages.map(pkg => {
+        {packages.filter(pkg => !(isRemote && pkg.id === 'session-only')).map(pkg => {
           const isSelected = state.resultPackage === pkg.id;
           return (
             <SelectableCard
