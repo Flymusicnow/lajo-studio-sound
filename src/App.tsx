@@ -12,6 +12,7 @@ import About from "./pages/About";
 import FileUpload from "./pages/FileUpload";
 import QuickBooking from "./pages/QuickBooking";
 import BookingSuccess from "./pages/BookingSuccess";
+import Pricing from "./pages/Pricing";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/admin/Login";
 import Dashboard from "./pages/admin/Dashboard";
@@ -49,6 +50,7 @@ const App = () => (
               <Route path="/admin/customers/:id" element={<ProtectedRoute><CustomerDetail /></ProtectedRoute>} />
               <Route path="/admin/calendar" element={<ProtectedRoute><Calendar /></ProtectedRoute>} />
               <Route path="/admin/content" element={<ProtectedRoute><Content /></ProtectedRoute>} />
+              <Route path="/pricing" element={<Pricing />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>

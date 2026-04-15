@@ -13,6 +13,7 @@ const PriceSummary = ({ state }: Props) => {
 
   const session = SESSIONS.find(s => s.id === state.session);
   const pkg = RESULT_PACKAGES.find(p => p.id === state.resultPackage);
+  const showPackageAsMain = pkg && pkg.price > 0;
 
   return (
     <div className="bg-card border border-border rounded p-6 space-y-4">
@@ -20,12 +21,20 @@ const PriceSummary = ({ state }: Props) => {
       <div className="w-10 h-[1px] bg-primary" />
 
       <div className="space-y-2 text-sm font-sans">
-        {session && (
+        {showPackageAsMain ? (
+          <div className="flex justify-between">
+            <span className="text-muted-foreground">
+              {t(`bb.s5.${pkg.id === 'record-your-song' ? 'record' : pkg.id === 'radio-ready' ? 'radio' : 'ep'}`)}
+              <span className="text-xs ml-1 text-muted-foreground/60">({t('bb.price.includesSession')})</span>
+            </span>
+            <span>{pkg.price.toLocaleString()} SEK</span>
+          </div>
+        ) : session ? (
           <div className="flex justify-between">
             <span className="text-muted-foreground">{t(`bb.s1.${session.id}`)}</span>
             <span>{session.price > 0 ? `${session.price.toLocaleString()} SEK` : '–'}</span>
           </div>
-        )}
+        ) : null}
 
         {state.addOns.map(id => {
           const addon = ADDONS.find(a => a.id === id);
@@ -37,17 +46,10 @@ const PriceSummary = ({ state }: Props) => {
           ) : null;
         })}
 
-        {state.mastering === 'per-track' && !pkg?.includesMastering && (
+        {state.mastering === 'per-track' && !(pkg?.includesMastering) && (
           <div className="flex justify-between">
             <span className="text-muted-foreground">{t('bb.s4.perTrack')} ×{state.masteringTracks}</span>
             <span>{(state.masteringTracks * MASTERING_PRICE_PER_TRACK).toLocaleString()} SEK</span>
-          </div>
-        )}
-
-        {pkg && pkg.price > 0 && (
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">{t(`bb.s5.${pkg.id === 'record-your-song' ? 'record' : pkg.id === 'radio-ready' ? 'radio' : 'ep'}`)}</span>
-            <span>{pkg.price.toLocaleString()} SEK</span>
           </div>
         )}
       </div>

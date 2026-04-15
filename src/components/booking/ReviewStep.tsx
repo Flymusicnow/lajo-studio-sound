@@ -18,7 +18,9 @@ const ReviewStep = ({ state }: Props) => {
       <p className="text-muted-foreground font-sans text-sm">{t('bb.s8.sub')}</p>
 
       <div className="bg-card border border-border rounded p-6 space-y-3 text-sm font-sans">
-        <Row label={t('bb.s1.title')} value={t(`bb.s1.${state.session}`)} />
+        {state.resultPackage && state.resultPackage !== 'session-only' ? null : (
+          <Row label={t('bb.s1.title')} value={t(`bb.s1.${state.session}`)} />
+        )}
         {state.creativeTypes.length > 0 && (
           <Row label={t('bb.s2.title')} value={state.creativeTypes.map(ct => t(`bb.s2.${ct === 'new-song' ? 'new' : ct === 'develop-existing' ? 'develop' : ct === 'beat-production' ? 'beat' : ct}`)).join(', ')} />
         )}
