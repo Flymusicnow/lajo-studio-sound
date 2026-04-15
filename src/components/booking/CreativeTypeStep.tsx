@@ -1,6 +1,6 @@
 import { useLanguage } from '@/contexts/LanguageContext';
 import SelectableCard from './SelectableCard';
-import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import type { BookingState, BookingAction } from './bookingConfig';
 
 interface Props {
@@ -38,11 +38,12 @@ const CreativeTypeStep = ({ state, dispatch }: Props) => {
       </div>
 
       {state.creativeTypes.includes('other') && (
-        <Input
+        <Textarea
           value={state.creativeOtherText}
           onChange={e => dispatch({ type: 'SET_CREATIVE_OTHER_TEXT', text: e.target.value })}
           placeholder={t('bb.s2.other.placeholder')}
-          className="bg-input border-border mt-3"
+          className="bg-input border-border mt-3 min-h-[80px] resize-y"
+          style={{ fieldSizing: 'content' } as any}
         />
       )}
     </div>

@@ -2,11 +2,13 @@ export interface SessionOption {
   id: string;
   price: number;
   isCustom?: boolean;
+  baseHours: number;
 }
 
 export interface AddOn {
   id: string;
   price: number;
+  estimatedHours: number;
 }
 
 export interface ResultPackage {
@@ -16,17 +18,17 @@ export interface ResultPackage {
 }
 
 export const SESSIONS: SessionOption[] = [
-  { id: '4h', price: 4500 },
-  { id: '8h', price: 8500 },
-  { id: 'custom', price: 0, isCustom: true },
+  { id: '4h', price: 4500, baseHours: 4 },
+  { id: '8h', price: 8500, baseHours: 8 },
+  { id: 'custom', price: 0, isCustom: true, baseHours: 4 },
 ];
 
 export const ADDONS: AddOn[] = [
-  { id: 'arrangement', price: 1500 },
-  { id: 'vocal', price: 2000 },
-  { id: 'sound-design', price: 1500 },
-  { id: 'extra-revision', price: 1000 },
-  { id: 'express', price: 2500 },
+  { id: 'arrangement', price: 1500, estimatedHours: 2 },
+  { id: 'vocal', price: 2000, estimatedHours: 3 },
+  { id: 'sound-design', price: 1500, estimatedHours: 2 },
+  { id: 'extra-revision', price: 1000, estimatedHours: 1 },
+  { id: 'express', price: 2500, estimatedHours: 0 },
 ];
 
 export const RESULT_PACKAGES: ResultPackage[] = [
@@ -69,6 +71,7 @@ export type BookingState = {
   email: string;
   phone: string;
   paymentChoice: 'deposit' | 'full';
+  promoCode: string;
 };
 
 export const initialBookingState: BookingState = {
@@ -91,6 +94,7 @@ export const initialBookingState: BookingState = {
   email: '',
   phone: '',
   paymentChoice: 'deposit',
+  promoCode: '',
 };
 
 export type BookingAction =
@@ -167,4 +171,25 @@ export function calculateTotal(state: BookingState): number {
   }
 
   return total;
+}
+
+export function calculateWorkloadHours(state: BookingState): number {
+  let hours = 0;
+  const session = SESSIONS.find(s => s.id === state.session);
+  if (session) hours += session.baseHours;
+
+  for (const addonId of state.addOns) {
+    const addon = ADDONS.find(a => a.id === addonId);
+    if (addon) hours += addon.estimatedHours;
+  }
+
+  if (state.mastering === 'per-track') {
+    hours += state.masteringTracks * 0.5;
+  }
+
+  return hours;
+}
+
+export function calculateMinDeadlineDays(workloadHours: number): number {
+  return Math.max(5, Math.ceil(workloadHours / 4));
 }

@@ -247,6 +247,54 @@ const translations: Record<Language, Record<string, string>> = {
 
     // Footer
     'footer.rights': 'Alla rättigheter förbehållna.',
+
+    // Studio Entry
+    'entry.title': 'Första gången i studio? Eller redo att ta nästa steg?',
+    'entry.subtitle': 'Du behöver inte ha allt klart. Du behöver inte vara "färdig artist". Du behöver bara ha en idé. Vi hjälper dig att ta den vidare.',
+    'entry.simple.title': 'Starta enkelt',
+    'entry.simple.desc': 'För dig som vill komma igång utan att överkomplicera.',
+    'entry.simple.1': 'Testa din idé i studion',
+    'entry.simple.2': 'Få vägledning direkt',
+    'entry.simple.3': 'Ta första steget på riktigt',
+    'entry.simple.from': 'Från 4 500 SEK',
+    'entry.simple.cta': 'Starta här',
+    'entry.build.title': 'Bygg din låt',
+    'entry.build.desc': 'För dig som vill skapa något som håller.',
+    'entry.build.badge': 'Full process',
+    'entry.build.1': 'Struktur, sound & riktning',
+    'entry.build.2': 'Produktion, mix & mastering',
+    'entry.build.3': 'Färdig låt redo för release',
+    'entry.build.from': 'Från 8 900 SEK',
+    'entry.build.cta': 'Starta ditt projekt',
+    'entry.unsure': 'Osäker på vad du behöver? Börja enkelt. Vi guidar dig vidare.',
+
+    // Result Package Details
+    'bb.s5.title2': 'Välj ditt slutresultat',
+    'bb.s5.sub2': 'Vad vill du lämna sessionen med?',
+    'bb.s5.explain': 'Din session är tiden. Det här är vad du vill lämna med.',
+    'bb.s5.included': 'Ingår',
+    'bb.s5.notIncluded': 'Ingår ej',
+    'bb.s5.inc.recording': 'Inspelning',
+    'bb.s5.inc.basicMix': 'Grundläggande mixbalans',
+    'bb.s5.inc.fileExport': 'Fil-export',
+    'bb.s5.inc.demoMix': 'Demomix',
+    'bb.s5.inc.delivery5': 'Leverans inom 5 arbetsdagar',
+    'bb.s5.inc.delivery14': 'Leverans inom 14 arbetsdagar',
+    'bb.s5.inc.fullProduction': 'Full produktion',
+    'bb.s5.inc.proMix': 'Professionell mix',
+    'bb.s5.inc.mastering': 'Mastering',
+    'bb.s5.inc.3songs': '3 låtar',
+    'bb.s5.exc.fullMix': 'Professionell mix',
+    'bb.s5.exc.mastering': 'Mastering',
+    'bb.s5.exc.production': 'Produktion',
+    'bb.s5.exc.fullProduction': 'Full produktion',
+
+    // Promo code
+    'bb.s7.promo': 'Rabattkod',
+    'bb.s7.promo.placeholder': 'Ange kod...',
+
+    // Review workload
+    'bb.s8.workload': 'Beräknad arbetstid',
   },
   en: {
     // Navigation
@@ -475,6 +523,54 @@ const translations: Record<Language, Record<string, string>> = {
 
     // Footer
     'footer.rights': 'All rights reserved.',
+
+    // Studio Entry
+    'entry.title': 'First time in the studio? Or ready to take the next step?',
+    'entry.subtitle': "You don't need to have it all figured out. You don't need to be a \"finished artist\". You just need an idea. We'll help you take it further.",
+    'entry.simple.title': 'Start simple',
+    'entry.simple.desc': 'For you who want to get started without overcomplicating things.',
+    'entry.simple.1': 'Test your idea in the studio',
+    'entry.simple.2': 'Get guidance right away',
+    'entry.simple.3': 'Take the first real step',
+    'entry.simple.from': 'From 4 500 SEK',
+    'entry.simple.cta': 'Start here',
+    'entry.build.title': 'Build your song',
+    'entry.build.desc': 'For you who want to create something that lasts.',
+    'entry.build.badge': 'Full process',
+    'entry.build.1': 'Structure, sound & direction',
+    'entry.build.2': 'Production, mix & mastering',
+    'entry.build.3': 'Finished song ready for release',
+    'entry.build.from': 'From 8 900 SEK',
+    'entry.build.cta': 'Start your project',
+    'entry.unsure': "Not sure what you need? Start simple. We'll guide you further.",
+
+    // Result Package Details
+    'bb.s5.title2': 'Choose your final result',
+    'bb.s5.sub2': 'What do you want to leave the session with?',
+    'bb.s5.explain': 'Your session is the time. This is what you want to leave with.',
+    'bb.s5.included': 'Included',
+    'bb.s5.notIncluded': 'Not included',
+    'bb.s5.inc.recording': 'Recording',
+    'bb.s5.inc.basicMix': 'Basic mix balance',
+    'bb.s5.inc.fileExport': 'File export',
+    'bb.s5.inc.demoMix': 'Demo mix',
+    'bb.s5.inc.delivery5': 'Delivery within 5 business days',
+    'bb.s5.inc.delivery14': 'Delivery within 14 business days',
+    'bb.s5.inc.fullProduction': 'Full production',
+    'bb.s5.inc.proMix': 'Professional mix',
+    'bb.s5.inc.mastering': 'Mastering',
+    'bb.s5.inc.3songs': '3 songs',
+    'bb.s5.exc.fullMix': 'Professional mix',
+    'bb.s5.exc.mastering': 'Mastering',
+    'bb.s5.exc.production': 'Production',
+    'bb.s5.exc.fullProduction': 'Full production',
+
+    // Promo code
+    'bb.s7.promo': 'Promo code',
+    'bb.s7.promo.placeholder': 'Enter code...',
+
+    // Review workload
+    'bb.s8.workload': 'Estimated workload',
   },
 };
 

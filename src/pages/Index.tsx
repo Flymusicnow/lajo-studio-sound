@@ -1,5 +1,6 @@
 import Layout from '@/components/Layout';
 import Hero from '@/components/Hero';
+import StudioEntry from '@/components/StudioEntry';
 import ThreeWays from '@/components/ThreeWays';
 import Process from '@/components/Process';
 import ForWho from '@/components/ForWho';
@@ -36,6 +37,9 @@ const Index = () => {
         <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
       </Helmet>
       <Hero />
+      <AnimatedSection>
+        <StudioEntry />
+      </AnimatedSection>
       <AnimatedSection>
         <ThreeWays />
       </AnimatedSection>

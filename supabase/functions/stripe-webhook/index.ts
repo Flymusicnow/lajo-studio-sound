@@ -31,26 +31,27 @@ serve(async (req) => {
     if (webhookSecret && sig) {
       event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
     } else {
-      // Fallback: parse without signature verification (dev mode)
       event = JSON.parse(body) as Stripe.Event;
     }
 
     if (event.type === "checkout.session.completed") {
       const session = event.data.object as Stripe.Checkout.Session;
       const bookingRequestId = session.metadata?.booking_request_id;
-      const paymentType = session.metadata?.type;
+      const paymentStage = session.metadata?.payment_stage || session.metadata?.type || "deposit";
 
       if (bookingRequestId) {
-        const paymentStatus = paymentType === "full" ? "fully_paid" : "deposit_paid";
+        const isDeposit = paymentStage === "deposit";
+        const paymentStatus = isDeposit ? "deposit_paid" : "fully_paid";
+        const bookingStatus = isDeposit ? "paid" : "paid";
 
         // Update booking request
         await supabase.from("booking_requests").update({
-          status: "paid",
+          status: bookingStatus,
           payment_status: paymentStatus,
           updated_at: new Date().toISOString(),
         }).eq("id", bookingRequestId);
 
-        // Get customer info for email
+        // Get customer info
         const { data: booking } = await supabase
           .from("booking_requests")
           .select("*, customers(*)")
@@ -58,17 +59,36 @@ serve(async (req) => {
           .single();
 
         if (booking?.customers) {
-          // Send payment confirmation email
+          // Send appropriate email
+          const emailType = isDeposit ? "payment_received" : "payment_received";
           await supabase.functions.invoke("send-studio-email", {
             body: {
-              type: "payment_received",
+              type: emailType,
               email: booking.customers.email,
               customerName: booking.customers.name,
               bookingId: bookingRequestId,
               totalPrice: booking.total_price,
               depositAmount: booking.deposit_amount,
+              uploadUrl: isDeposit ? `https://lajo-studio-sound.lovable.app/upload/${bookingRequestId}` : undefined,
             },
           });
+
+          // If deposit paid, also send file upload instructions
+          if (isDeposit) {
+            try {
+              await supabase.functions.invoke("send-studio-email", {
+                body: {
+                  type: "files_requested",
+                  email: booking.customers.email,
+                  customerName: booking.customers.name,
+                  bookingId: bookingRequestId,
+                  uploadUrl: `https://lajo-studio-sound.lovable.app/upload/${bookingRequestId}`,
+                },
+              });
+            } catch (e) {
+              console.error("Upload email failed:", e);
+            }
+          }
 
           // Update customer total_spent
           await supabase.from("customers").update({
@@ -78,11 +98,20 @@ serve(async (req) => {
 
           // Telegram notification
           try {
-            await supabase.functions.invoke("send-telegram", {
-              body: {
-                message: `💰 <b>Betalning mottagen!</b>\n\n👤 ${booking.customers.name}\n💳 ${session.amount_total ? (session.amount_total / 100).toLocaleString() : '?'} SEK`,
-              },
-            });
+            const BOT_TOKEN = Deno.env.get("TELEGRAM_API_KEY");
+            const CHAT_ID = Deno.env.get("TELEGRAM_CHAT_ID");
+            if (BOT_TOKEN && CHAT_ID) {
+              const stageLabel = isDeposit ? "Förskott" : "Slutbetalning";
+              await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  chat_id: CHAT_ID,
+                  text: `💰 <b>Betalning mottagen!</b>\n\n👤 ${booking.customers.name}\n💳 ${session.amount_total ? (session.amount_total / 100).toLocaleString() : '?'} SEK\n📋 ${stageLabel}`,
+                  parse_mode: "HTML",
+                }),
+              });
+            }
           } catch (e) {
             console.error("Telegram notification failed:", e);
           }

@@ -1,5 +1,5 @@
 import { useLanguage } from '@/contexts/LanguageContext';
-import { calculateTotal } from './bookingConfig';
+import { calculateTotal, calculateWorkloadHours } from './bookingConfig';
 import type { BookingState } from './bookingConfig';
 
 interface Props {
@@ -10,6 +10,7 @@ const ReviewStep = ({ state }: Props) => {
   const { t } = useLanguage();
   const total = calculateTotal(state);
   const deposit = Math.round(total / 2);
+  const workload = calculateWorkloadHours(state);
 
   return (
     <div className="space-y-6">
@@ -33,7 +34,9 @@ const ReviewStep = ({ state }: Props) => {
         <Row label={t('booking.name')} value={state.name} />
         <Row label={t('booking.email')} value={state.email} />
         {state.phone && <Row label={t('booking.phone')} value={state.phone} />}
+        {state.promoCode && <Row label={t('bb.s7.promo')} value={state.promoCode} />}
         <Row label={t('bb.s7.payment')} value={state.paymentChoice === 'deposit' ? t('bb.s7.deposit') : t('bb.s7.full')} />
+        <Row label={t('bb.s8.workload')} value={`~${workload}h`} />
       </div>
 
       <div className="flex justify-between items-baseline pt-2">

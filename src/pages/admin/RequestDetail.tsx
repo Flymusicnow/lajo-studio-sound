@@ -269,8 +269,48 @@ const RequestDetail = () => {
             
             {request.status === 'new' && (
               <>
-                <Button onClick={() => updateStatus('approved', undefined, 'booking_approved')} className="w-full" size="sm">
-                  <CheckCircle className="mr-2 h-4 w-4" /> Godkänn + skicka mejl
+                <Button
+                  onClick={async () => {
+                    setStripeLoading(true);
+                    try {
+                      const customer = request.customers;
+                      // 1. Approve booking
+                      await supabase.from('booking_requests').update({
+                        status: 'awaiting_deposit',
+                        updated_at: new Date().toISOString(),
+                      }).eq('id', id);
+
+                      // 2. Create Stripe checkout
+                      const { data, error } = await supabase.functions.invoke('create-checkout', {
+                        body: {
+                          bookingRequestId: id,
+                          amount: request.deposit_amount,
+                          customerEmail: customer?.email,
+                          customerName: customer?.name,
+                        },
+                      });
+                      if (error) throw error;
+
+                      // 3. Send approval email with payment link
+                      await sendEmail('booking_approved', { stripeUrl: data?.url });
+
+                      toast({ title: 'Godkänd + betalningslänk skickad' });
+                      fetchRequest();
+                    } catch (e) {
+                      toast({ title: 'Något gick fel', variant: 'destructive' });
+                    } finally {
+                      setStripeLoading(false);
+                    }
+                  }}
+                  className="w-full"
+                  size="sm"
+                  disabled={stripeLoading}
+                >
+                  <CreditCard className="mr-2 h-4 w-4" />
+                  {stripeLoading ? 'Bearbetar...' : 'Godkänn & skicka betalningslänk'}
+                </Button>
+                <Button onClick={() => updateStatus('approved', undefined, 'booking_approved')} variant="outline" className="w-full" size="sm">
+                  <CheckCircle className="mr-2 h-4 w-4" /> Godkänn utan betalning
                 </Button>
                 <Button onClick={() => updateStatus('declined', undefined, 'booking_declined')} variant="outline" className="w-full" size="sm">
                   <XCircle className="mr-2 h-4 w-4" /> Neka + skicka mejl
@@ -278,7 +318,7 @@ const RequestDetail = () => {
               </>
             )}
 
-            {request.status === 'approved' && (
+            {(request.status === 'approved' || request.status === 'awaiting_deposit') && (
               <>
                 <Button onClick={() => updateStatus('awaiting_payment', undefined, 'payment_request')} className="w-full" size="sm">
                   <CreditCard className="mr-2 h-4 w-4" /> Skicka betalningslänk (mejl)
@@ -313,12 +353,12 @@ const RequestDetail = () => {
                   disabled={stripeLoading}
                 >
                   <DollarSign className="mr-2 h-4 w-4" />
-                  {stripeLoading ? 'Skapar...' : 'Skapa Stripe-betalningslänk'}
+                  {stripeLoading ? 'Skapar...' : 'Kopiera Stripe-länk'}
                 </Button>
               </>
             )}
 
-            {(request.status === 'awaiting_payment' || request.payment_status === 'unpaid') && (
+            {(request.status === 'awaiting_payment' || request.payment_status === 'unpaid') && request.status !== 'new' && (
               <>
                 <Button onClick={() => updateStatus('paid', 'deposit_paid', 'payment_received')} variant="outline" className="w-full" size="sm">
                   Markera förskott betalt

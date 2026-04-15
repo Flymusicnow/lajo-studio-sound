@@ -1,6 +1,7 @@
 import { useLanguage } from '@/contexts/LanguageContext';
 import SelectableCard from './SelectableCard';
-import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Minus, Plus } from 'lucide-react';
 import { MASTERING_PRICE_PER_TRACK, RESULT_PACKAGES } from './bookingConfig';
 import type { BookingState, BookingAction } from './bookingConfig';
 
@@ -14,6 +15,10 @@ const MasteringStep = ({ state, dispatch }: Props) => {
 
   const pkg = RESULT_PACKAGES.find(p => p.id === state.resultPackage);
   const masteringIncluded = pkg?.includesMastering;
+
+  const setTracks = (count: number) => {
+    dispatch({ type: 'SET_MASTERING_TRACKS', count: Math.max(1, Math.min(99, count)) });
+  };
 
   return (
     <div className="space-y-4">
@@ -48,16 +53,33 @@ const MasteringStep = ({ state, dispatch }: Props) => {
           </SelectableCard>
 
           {state.mastering === 'per-track' && (
-            <div className="flex items-center gap-3 mt-2">
+            <div className="flex items-center gap-4 mt-2">
               <label className="text-sm font-sans text-muted-foreground">{t('bb.s4.howMany')}</label>
-              <Input
-                type="number"
-                min={1}
-                max={20}
-                value={state.masteringTracks}
-                onChange={e => dispatch({ type: 'SET_MASTERING_TRACKS', count: Math.max(1, parseInt(e.target.value) || 1) })}
-                className="bg-input border-border w-20"
-              />
+              <div className="flex items-center gap-0">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  className="h-12 w-12 rounded-r-none border-border"
+                  onClick={() => setTracks(state.masteringTracks - 1)}
+                  disabled={state.masteringTracks <= 1}
+                >
+                  <Minus size={18} />
+                </Button>
+                <div className="h-12 w-14 flex items-center justify-center border-y border-border bg-input text-sm font-sans font-medium">
+                  {state.masteringTracks}
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  className="h-12 w-12 rounded-l-none border-border"
+                  onClick={() => setTracks(state.masteringTracks + 1)}
+                  disabled={state.masteringTracks >= 99}
+                >
+                  <Plus size={18} />
+                </Button>
+              </div>
             </div>
           )}
         </div>
