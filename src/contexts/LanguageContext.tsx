@@ -216,6 +216,8 @@ const translations: Record<Language, Record<string, string>> = {
     'bb.price.total': 'Totalt',
     'bb.price.deposit': 'Förskott (50%)',
     'bb.price.remaining': 'Resterande',
+    'bb.price.includesSession': 'inkl. studiotid',
+    'bb.s5.includesNote': 'Paketet inkluderar din studiotid.',
 
     // About
     'about.label': 'Om mig',
@@ -492,6 +494,8 @@ const translations: Record<Language, Record<string, string>> = {
     'bb.price.total': 'Total',
     'bb.price.deposit': 'Deposit (50%)',
     'bb.price.remaining': 'Remaining',
+    'bb.price.includesSession': 'incl. studio time',
+    'bb.s5.includesNote': 'The package includes your studio time.',
 
     // About
     'about.label': 'About',
