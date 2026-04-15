@@ -24,8 +24,10 @@ const PriceSummary = ({ state }: Props) => {
         {showPackageAsMain ? (
           <div className="flex justify-between">
             <span className="text-muted-foreground">
-              {t(`bb.s5.${pkg.id === 'record-your-song' ? 'record' : pkg.id === 'radio-ready' ? 'radio' : 'ep'}`)}
-              <span className="text-xs ml-1 text-muted-foreground/60">({t('bb.price.includesSession')})</span>
+              {t(`bb.s5.${pkg.id === 'record-your-song' ? 'record' : pkg.id === 'radio-ready' ? 'radio' : pkg.id === 'mixing-only' ? 'mixOnly' : pkg.id === 'mastering-only' ? 'masterOnly' : pkg.id === 'mix-and-master' ? 'mixMaster' : pkg.id === 'production-support' ? 'prodSupport' : 'ep'}`)}
+              {!['mixing-only', 'mastering-only', 'mix-and-master', 'production-support'].includes(pkg.id) && (
+                <span className="text-xs ml-1 text-muted-foreground/60">({t('bb.price.includesSession')})</span>
+              )}
             </span>
             <span>{pkg.price.toLocaleString()} SEK</span>
           </div>

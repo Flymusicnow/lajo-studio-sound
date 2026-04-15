@@ -291,6 +291,24 @@ const translations: Record<Language, Record<string, string>> = {
     'bb.s5.exc.production': 'Produktion',
     'bb.s5.exc.fullProduction': 'Full produktion',
 
+    // Remote packages
+    'bb.s5.mixOnly': 'Mixing Only',
+    'bb.s5.mixOnly.desc': 'Professionell mix av dina inspelade spår. Skicka stems, få en färdig mix.',
+    'bb.s5.masterOnly': 'Mastering Only',
+    'bb.s5.masterOnly.desc': 'Mastering av din färdiga mix för streaming och release.',
+    'bb.s5.mixMaster': 'Mix & Master',
+    'bb.s5.mixMaster.desc': 'Komplett mix och mastering — redo för release.',
+    'bb.s5.prodSupport': 'Produktionsstöd',
+    'bb.s5.prodSupport.desc': 'Hjälp med arrangemang, sound design och produktion av ditt spår.',
+    'bb.s5.inc.stemDelivery': 'Leverans av stems',
+    'bb.s5.inc.revisions2': '2 revisioner',
+    'bb.s5.inc.digitalMaster': 'Digital master (streaming-optimerad)',
+    'bb.s5.inc.mixAndMaster': 'Professionell mix + mastering',
+    'bb.s5.inc.arrangement': 'Arrangemangshjälp',
+    'bb.s5.inc.soundDesign': 'Sound design',
+    'bb.s5.inc.delivery10': 'Leverans inom 10 arbetsdagar',
+    'bb.s5.exc.revisions': 'Extra revisioner',
+
     // Remote Services
     'remote.title': 'Jobba med oss var du än befinner dig',
     'remote.subtitle': 'Vi tar emot projekt från hela Sverige och världen. Skicka dina filer för mixing, mastering, produktion eller vidareutveckling.',
@@ -626,6 +644,24 @@ const translations: Record<Language, Record<string, string>> = {
     'bb.s5.exc.mastering': 'Mastering',
     'bb.s5.exc.production': 'Production',
     'bb.s5.exc.fullProduction': 'Full production',
+
+    // Remote packages
+    'bb.s5.mixOnly': 'Mixing Only',
+    'bb.s5.mixOnly.desc': 'Professional mix of your recorded tracks. Send stems, get a finished mix.',
+    'bb.s5.masterOnly': 'Mastering Only',
+    'bb.s5.masterOnly.desc': 'Mastering of your finished mix for streaming and release.',
+    'bb.s5.mixMaster': 'Mix & Master',
+    'bb.s5.mixMaster.desc': 'Complete mix and mastering — ready for release.',
+    'bb.s5.prodSupport': 'Production Support',
+    'bb.s5.prodSupport.desc': 'Help with arrangement, sound design and production of your track.',
+    'bb.s5.inc.stemDelivery': 'Stem delivery',
+    'bb.s5.inc.revisions2': '2 revisions',
+    'bb.s5.inc.digitalMaster': 'Digital master (streaming-optimized)',
+    'bb.s5.inc.mixAndMaster': 'Professional mix + mastering',
+    'bb.s5.inc.arrangement': 'Arrangement help',
+    'bb.s5.inc.soundDesign': 'Sound design',
+    'bb.s5.inc.delivery10': 'Delivery within 10 business days',
+    'bb.s5.exc.revisions': 'Extra revisions',
 
     // Remote Services
     'remote.title': 'Work with us from anywhere',
