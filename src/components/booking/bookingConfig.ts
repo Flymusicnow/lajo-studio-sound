@@ -153,20 +153,23 @@ export function bookingReducer(state: BookingState, action: BookingAction): Book
 export function calculateTotal(state: BookingState): number {
   let total = 0;
   const session = SESSIONS.find(s => s.id === state.session);
-  if (session) total += session.price;
+  const pkg = RESULT_PACKAGES.find(p => p.id === state.resultPackage);
+
+  // Package price INCLUDES session — use the higher of the two, not both
+  if (pkg && pkg.price > 0) {
+    total += pkg.price;
+  } else if (session) {
+    total += session.price;
+  }
 
   for (const addonId of state.addOns) {
     const addon = ADDONS.find(a => a.id === addonId);
     if (addon) total += addon.price;
   }
 
-  const pkg = RESULT_PACKAGES.find(p => p.id === state.resultPackage);
-  if (pkg) {
-    total += pkg.price;
-    if (!pkg.includesMastering && state.mastering === 'per-track') {
-      total += state.masteringTracks * MASTERING_PRICE_PER_TRACK;
-    }
-  } else if (state.mastering === 'per-track') {
+  if (pkg && !pkg.includesMastering && state.mastering === 'per-track') {
+    total += state.masteringTracks * MASTERING_PRICE_PER_TRACK;
+  } else if (!pkg && state.mastering === 'per-track') {
     total += state.masteringTracks * MASTERING_PRICE_PER_TRACK;
   }
 

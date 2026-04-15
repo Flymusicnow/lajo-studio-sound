@@ -59,7 +59,7 @@ const ResultPackageStep = ({ state, dispatch }: Props) => {
     <div className="space-y-4">
       <h2 className="text-2xl font-serif font-semibold">{t('bb.s5.title2')}</h2>
       <p className="text-muted-foreground font-sans text-sm mb-2">{t('bb.s5.sub2')}</p>
-      <p className="text-muted-foreground/70 font-sans text-xs italic mb-6">{t('bb.s5.explain')}</p>
+      <p className="text-muted-foreground/70 font-sans text-xs italic mb-6">{t('bb.s5.explain')} {t('bb.s5.includesNote')}</p>
 
       <div className="grid gap-4">
         {packages.map(pkg => {
