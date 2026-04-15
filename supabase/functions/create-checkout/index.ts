@@ -13,7 +13,7 @@ serve(async (req) => {
   }
 
   try {
-    const { bookingRequestId, amount, customerEmail, customerName } = await req.json();
+    const { bookingRequestId, amount, customerEmail, customerName, paymentStage } = await req.json();
 
     if (!bookingRequestId || !amount || !customerEmail) {
       return new Response(
@@ -59,7 +59,8 @@ serve(async (req) => {
       cancel_url: `${req.headers.get("origin")}/booking`,
       metadata: {
         booking_request_id: bookingRequestId,
-        type: "deposit",
+        type: paymentStage || "deposit",
+        payment_stage: paymentStage || "deposit",
       },
     });
 
