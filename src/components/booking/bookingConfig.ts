@@ -15,6 +15,8 @@ export interface ResultPackage {
   id: string;
   price: number;
   includesMastering?: boolean;
+  remoteOnly?: boolean;
+  studioOnly?: boolean;
 }
 
 export const SESSIONS: SessionOption[] = [
@@ -33,10 +35,14 @@ export const ADDONS: AddOn[] = [
 ];
 
 export const RESULT_PACKAGES: ResultPackage[] = [
-  { id: 'session-only', price: 0 },
-  { id: 'record-your-song', price: 8900 },
+  { id: 'session-only', price: 0, studioOnly: true },
+  { id: 'record-your-song', price: 8900, studioOnly: true },
   { id: 'radio-ready', price: 18000, includesMastering: true },
   { id: 'ep-package', price: 45000, includesMastering: true },
+  { id: 'mixing-only', price: 5500, remoteOnly: true },
+  { id: 'mastering-only', price: 1500, includesMastering: true, remoteOnly: true },
+  { id: 'mix-and-master', price: 6500, includesMastering: true, remoteOnly: true },
+  { id: 'production-support', price: 12000, remoteOnly: true },
 ];
 
 export const MASTERING_PRICE_PER_TRACK = 1500;
