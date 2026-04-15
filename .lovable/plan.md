@@ -1,57 +1,57 @@
 
 
-# Fix Pricing Page 404 + Package Price Logic + Step 5 Clarity
+# Fix Pricing Page — Missing Translations
 
-## Problems
-
-1. **`/pricing` shows 404** — the route is missing from `App.tsx` (line 52: `<Route path="*"` catches it)
-2. **Price stacking bug** — selecting 8h session (8500) + Radio Ready (18000) = 26500. Radio Ready and other result packages should INCLUDE the session cost, not add on top. The package price IS the total for that deliverable.
-3. **Step 5 still confusing** — needs clearer messaging that the package replaces/upgrades the session, not adds to it.
+## Problem
+All text on the `/pricing` page shows raw translation keys (e.g. `pricing.title`, `pricing.service.mixing`) because no translations were added to `LanguageContext.tsx`.
 
 ## Solution
+Add all ~40 pricing translation keys to both `sv` and `en` sections in `LanguageContext.tsx`.
 
-### A. Add `/pricing` route to `App.tsx`
-- Import `Pricing` page and add route before the catch-all `*` route
+### Keys to add (SV / EN)
 
-### B. Fix `calculateTotal` in `bookingConfig.ts`
-- When a result package with price > 0 is selected, use the **higher** of session price or package price (not both)
-- Logic: `total += Math.max(session.price, pkg.price)` instead of `total += session.price` then `total += pkg.price`
-- "Session only" (price 0) keeps normal session price
-- This means Radio Ready at 18000 already includes any session up to that value
+| Key | Svenska | English |
+|-----|---------|---------|
+| `pricing.title` | Priser | Pricing |
+| `pricing.subtitle` | Bygg din session och se priset direkt | Build your session and see the price |
+| `pricing.configurator.title` | Prisberäknare | Price Calculator |
+| `pricing.service` | Tjänst | Service |
+| `pricing.service.recording` | Inspelning | Recording |
+| `pricing.service.mixing` | Mixning | Mixing |
+| `pricing.service.mastering` | Mastering | Mastering |
+| `pricing.service.production` | Produktion | Production |
+| `pricing.package` | Paket | Package |
+| `pricing.package.basic` | Basic | Basic |
+| `pricing.package.premium` | Premium | Premium |
+| `pricing.package.highend` | High-End | High-End |
+| `pricing.package.recommend` | Rekommenderat | Recommended |
+| `pricing.tracks` | Antal spår | Track count |
+| `pricing.tracks.0-30` | 0–30 spår | 0–30 tracks |
+| `pricing.tracks.31-60` | 31–60 spår | 31–60 tracks |
+| `pricing.tracks.61-100` | 61–100 spår | 61–100 tracks |
+| `pricing.tracks.100+` | 100+ spår | 100+ tracks |
+| `pricing.delivery` | Leverans | Delivery |
+| `pricing.delivery.standard` | Standard (5–7 dagar) | Standard (5–7 days) |
+| `pricing.delivery.priority` | Prioriterad (2–3 dagar) | Priority (2–3 days) |
+| `pricing.total` | Totalt | Total |
+| `pricing.from` | Från | From |
+| `pricing.book` | Boka nu | Book now |
+| `pricing.mixing.title` | Mixning | Mixing |
+| `pricing.mastering.title` | Mastering | Mastering |
+| `pricing.recording.title` | Inspelning | Recording |
+| `pricing.production.title` | Produktion | Production |
+| `pricing.revisions` | revisioner | revisions |
+| `pricing.unlimited` | Obegränsade revisioner | Unlimited revisions |
+| `pricing.stereo` | Stereo Mastering | Stereo Mastering |
+| `pricing.hybrid` | Hybrid Mastering | Hybrid Mastering |
+| `pricing.stem` | Stem Mastering | Stem Mastering |
+| `pricing.halfday` | Halvdag (4h) | Half-day (4h) |
+| `pricing.fullday` | Heldag (8h) | Full-day (8h) |
+| `pricing.weekend` | Helg | Weekend |
+| `pricing.exclusive` | Exklusiv beat/produktion | Exclusive beat/production |
 
-### C. Update `PriceSummary.tsx`
-- When package is selected and its price > session price, show the package as the main line item (not session + package separately)
-- When package price is 0 (session only), show session price normally
-
-### D. Update `ResultPackageStep.tsx` step 5 clarity
-- Add clearer explanation: "Paketet inkluderar din studiotid" / "The package includes your studio time"
-- Show that package price replaces (not adds to) session price
-
-### E. Update `ReviewStep.tsx`
-- Reflect the same pricing logic in the review summary
-
-## Files Changed
+## File Changed
 ```
-EDIT: src/App.tsx                          — add /pricing route
-EDIT: src/components/booking/bookingConfig.ts — fix calculateTotal logic
-EDIT: src/components/booking/PriceSummary.tsx  — show correct line items
-EDIT: src/components/booking/ResultPackageStep.tsx — clarify step 5
-EDIT: src/components/booking/ReviewStep.tsx — reflect pricing in review
-```
-
-## Technical Detail
-```typescript
-// New calculateTotal logic:
-const session = SESSIONS.find(s => s.id === state.session);
-const pkg = RESULT_PACKAGES.find(p => p.id === state.resultPackage);
-
-if (pkg && pkg.price > 0) {
-  // Package includes session — use package price only
-  total += pkg.price;
-} else if (session) {
-  // Session only or no package — use session price
-  total += session.price;
-}
-// Add-ons still stack on top as before
+EDIT: src/contexts/LanguageContext.tsx — add ~40 pricing keys to both sv and en
 ```
 
