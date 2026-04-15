@@ -15,6 +15,7 @@ interface BookingRequest {
   total_price: number;
   deposit_amount: number;
   payment_status: string;
+  work_mode: string;
   created_at: string;
   customers: { name: string; email: string } | null;
 }
@@ -30,7 +31,7 @@ const Requests = () => {
     const fetchRequests = async () => {
       const { data } = await supabase
         .from('booking_requests')
-        .select('id, status, session_type, result_package, total_price, deposit_amount, payment_status, created_at, customers(name, email)')
+        .select('id, status, session_type, result_package, total_price, deposit_amount, payment_status, work_mode, created_at, customers(name, email)')
         .order('created_at', { ascending: false });
       
       if (data) setRequests(data as any);
@@ -94,6 +95,9 @@ const Requests = () => {
                 <p className="text-xs text-muted-foreground font-sans">{r.customers?.email}</p>
               </div>
               <div className="flex items-center gap-2 flex-wrap">
+                <span className={`px-2 py-0.5 rounded text-xs font-sans font-medium ${r.work_mode === 'remote' ? 'bg-blue-500/20 text-blue-400' : 'bg-muted text-muted-foreground'}`}>
+                  {r.work_mode === 'remote' ? '🏠 Remote' : '🎙 Studio'}
+                </span>
                 <StatusBadge status={r.status} />
                 <StatusBadge status={r.payment_status} />
               </div>

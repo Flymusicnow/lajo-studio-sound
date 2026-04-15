@@ -4,7 +4,11 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 import Layout from '@/components/Layout';
 
-const BookingConfirmation = () => {
+interface Props {
+  isRemote?: boolean;
+}
+
+const BookingConfirmation = ({ isRemote }: Props) => {
   const { t } = useLanguage();
 
   return (
@@ -16,7 +20,12 @@ const BookingConfirmation = () => {
               <CheckCircle size={48} strokeWidth={1.5} />
             </div>
             <h1 className="text-3xl font-serif font-semibold mb-4">{t('booking.success.title')}</h1>
-            <p className="text-muted-foreground font-sans mb-8">{t('bb.confirm.text')}</p>
+            <p className="text-muted-foreground font-sans mb-4">{t('bb.confirm.text')}</p>
+            {isRemote && (
+              <p className="text-muted-foreground font-sans text-sm mb-8 bg-card border border-border rounded p-4">
+                📁 {t('bb.confirm.remote.note')}
+              </p>
+            )}
             <Button asChild variant="outline" className="border-border hover:bg-secondary">
               <Link to="/">
                 <ArrowLeft className="mr-2 h-4 w-4" />

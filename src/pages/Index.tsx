@@ -2,6 +2,7 @@ import Layout from '@/components/Layout';
 import Hero from '@/components/Hero';
 import StudioEntry from '@/components/StudioEntry';
 import ThreeWays from '@/components/ThreeWays';
+import RemoteServices from '@/components/RemoteServices';
 import Process from '@/components/Process';
 import ForWho from '@/components/ForWho';
 import FAQ from '@/components/FAQ';
@@ -42,6 +43,9 @@ const Index = () => {
       </AnimatedSection>
       <AnimatedSection>
         <ThreeWays />
+      </AnimatedSection>
+      <AnimatedSection>
+        <RemoteServices />
       </AnimatedSection>
       <AnimatedSection>
         <Portfolio />

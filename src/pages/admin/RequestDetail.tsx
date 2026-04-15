@@ -123,8 +123,11 @@ const RequestDetail = () => {
         <div className="lg:col-span-2 space-y-6">
           {/* Header */}
           <div className="bg-card border border-border rounded p-6">
-            <div className="flex flex-wrap items-center gap-3 mb-4">
+           <div className="flex flex-wrap items-center gap-3 mb-4">
               <h1 className="text-xl font-serif font-semibold">{customer?.name || 'Okänd kund'}</h1>
+              <span className={`px-2 py-0.5 rounded text-xs font-sans font-medium ${request.work_mode === 'remote' ? 'bg-blue-500/20 text-blue-400' : 'bg-muted text-muted-foreground'}`}>
+                {request.work_mode === 'remote' ? '🏠 Remote' : '🎙 Studio'}
+              </span>
               <StatusBadge status={request.status} />
               <StatusBadge status={request.payment_status} />
             </div>
