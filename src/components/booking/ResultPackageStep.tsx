@@ -90,7 +90,7 @@ const ResultPackageStep = ({ state, dispatch }: Props) => {
                     <ul className="space-y-1">
                       {pkg.includes.map((item, i) => (
                         <li key={i} className="flex items-center gap-2 text-sm font-sans text-muted-foreground">
-                          <Check size={14} className="text-emerald-400 shrink-0" /> {item}
+                          <Check size={14} className="text-primary shrink-0" /> {item}
                         </li>
                       ))}
                     </ul>
@@ -103,7 +103,7 @@ const ResultPackageStep = ({ state, dispatch }: Props) => {
                     <ul className="space-y-1">
                       {pkg.notIncluded.map((item, i) => (
                         <li key={i} className="flex items-center gap-2 text-sm font-sans text-muted-foreground/60">
-                          <X size={14} className="text-red-400/60 shrink-0" /> {item}
+                          <X size={14} className="text-muted-foreground shrink-0" /> {item}
                         </li>
                       ))}
                     </ul>
