@@ -33,9 +33,11 @@ const Login = () => {
         setLoading(false);
         return;
       }
-      const { error } = await signUp(email, password);
+      const { data, error } = await signUp(email, password);
       if (error) {
         setError(error.message || 'Kunde inte skapa konto.');
+      } else if (data?.session) {
+        navigate('/admin');
       } else {
         setSignUpSuccess(true);
       }
