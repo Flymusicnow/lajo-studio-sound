@@ -291,6 +291,25 @@ const translations: Record<Language, Record<string, string>> = {
     'bb.s5.exc.production': 'Produktion',
     'bb.s5.exc.fullProduction': 'Full produktion',
 
+    // Remote Services
+    'remote.title': 'Jobba med oss var du än befinner dig',
+    'remote.subtitle': 'Vi tar emot projekt från hela Sverige och världen. Skicka dina filer för mixing, mastering, produktion eller vidareutveckling.',
+    'remote.service.mixing': 'Mixing',
+    'remote.service.mastering': 'Mastering',
+    'remote.service.production': 'Produktionshjälp',
+    'remote.service.topline': 'Topline / vokalproduktion',
+    'remote.service.development': 'Spårutveckling',
+    'remote.cta': 'Starta ett remote-projekt',
+
+    // Work Mode Step
+    'bb.s0.title': 'Hur vill du jobba?',
+    'bb.s0.sub': 'Välj om du vill komma till studion eller skicka filer remote.',
+    'bb.s0.studio': 'I studion',
+    'bb.s0.studio.desc': 'Boka en session i vår studio med producent på plats.',
+    'bb.s0.remote': 'Remote / Skicka filer',
+    'bb.s0.remote.desc': 'Skicka dina stems eller spår för mixing, mastering eller produktion.',
+    'bb.confirm.remote.note': 'Du får instruktioner för filuppladdning via e-post efter godkännande.',
+
     // Promo code
     'bb.s7.promo': 'Rabattkod',
     'bb.s7.promo.placeholder': 'Ange kod...',
@@ -607,6 +626,25 @@ const translations: Record<Language, Record<string, string>> = {
     'bb.s5.exc.mastering': 'Mastering',
     'bb.s5.exc.production': 'Production',
     'bb.s5.exc.fullProduction': 'Full production',
+
+    // Remote Services
+    'remote.title': 'Work with us from anywhere',
+    'remote.subtitle': 'We accept remote projects from Sweden and worldwide. Send your files for mixing, mastering, production support, or further development.',
+    'remote.service.mixing': 'Mixing',
+    'remote.service.mastering': 'Mastering',
+    'remote.service.production': 'Production help',
+    'remote.service.topline': 'Topline / vocal production',
+    'remote.service.development': 'Track development',
+    'remote.cta': 'Start a remote project',
+
+    // Work Mode Step
+    'bb.s0.title': 'How do you want to work?',
+    'bb.s0.sub': 'Choose whether to come to the studio or send files remotely.',
+    'bb.s0.studio': 'In studio',
+    'bb.s0.studio.desc': 'Book a session in our studio with a producer on site.',
+    'bb.s0.remote': 'Remote / Send files',
+    'bb.s0.remote.desc': 'Send your stems or tracks for mixing, mastering, or production.',
+    'bb.confirm.remote.note': 'You will receive file upload instructions via email after approval.',
 
     // Promo code
     'bb.s7.promo': 'Promo code',
