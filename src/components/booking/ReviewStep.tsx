@@ -28,7 +28,16 @@ const ReviewStep = ({ state }: Props) => {
           <Row label={t('bb.s3.title')} value={state.addOns.map(a => t(`bb.s3.${a === 'sound-design' ? 'sound' : a === 'extra-revision' ? 'revision' : a}`)).join(', ')} />
         )}
         {state.resultPackage && (
-          <Row label={t('bb.s5.title')} value={t(`bb.s5.${state.resultPackage === 'record-your-song' ? 'record' : state.resultPackage === 'radio-ready' ? 'radio' : state.resultPackage === 'session-only' ? 'sessionOnly' : 'ep'}`)} />
+          <Row label={t('bb.s5.title')} value={t(`bb.s5.${
+            state.resultPackage === 'record-your-song' ? 'record' :
+            state.resultPackage === 'radio-ready' ? 'radio' :
+            state.resultPackage === 'session-only' ? 'sessionOnly' :
+            state.resultPackage === 'mixing-only' ? 'mixOnly' :
+            state.resultPackage === 'mastering-only' ? 'masterOnly' :
+            state.resultPackage === 'mix-and-master' ? 'mixMaster' :
+            state.resultPackage === 'production-support' ? 'prodSupport' :
+            'ep'
+          }`)} />
         )}
         {state.mixingScope && (
           <Row label={t('bb.s6.title')} value={t(`bb.s6.${state.mixingScope === '0-20' ? 'standard' : state.mixingScope === '20-50' ? 'advanced' : 'complex'}`)} />

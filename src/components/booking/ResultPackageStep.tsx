@@ -1,6 +1,7 @@
 import { useLanguage } from '@/contexts/LanguageContext';
 import SelectableCard from './SelectableCard';
 import { Check, X } from 'lucide-react';
+import { RESULT_PACKAGES } from './bookingConfig';
 import type { BookingState, BookingAction } from './bookingConfig';
 
 interface Props {
@@ -18,10 +19,22 @@ interface PackageDetail {
   notIncluded: string[];
 }
 
+const PACKAGE_LABEL_MAP: Record<string, string> = {
+  'session-only': 'bb.s5.sessionOnly',
+  'record-your-song': 'bb.s5.record',
+  'radio-ready': 'bb.s5.radio',
+  'ep-package': 'bb.s5.ep',
+  'mixing-only': 'bb.s5.mixOnly',
+  'mastering-only': 'bb.s5.masterOnly',
+  'mix-and-master': 'bb.s5.mixMaster',
+  'production-support': 'bb.s5.prodSupport',
+};
+
 const ResultPackageStep = ({ state, dispatch, isRemote }: Props) => {
   const { t } = useLanguage();
 
-  const packages: PackageDetail[] = [
+  const allPackages: PackageDetail[] = [
+    // Studio packages
     {
       id: 'session-only',
       labelKey: 'bb.s5.sessionOnly',
@@ -38,6 +51,7 @@ const ResultPackageStep = ({ state, dispatch, isRemote }: Props) => {
       includes: [t('bb.s5.inc.recording'), t('bb.s5.inc.demoMix'), t('bb.s5.inc.delivery5')],
       notIncluded: [t('bb.s5.exc.mastering'), t('bb.s5.exc.fullProduction')],
     },
+    // Shared packages
     {
       id: 'radio-ready',
       labelKey: 'bb.s5.radio',
@@ -54,7 +68,49 @@ const ResultPackageStep = ({ state, dispatch, isRemote }: Props) => {
       includes: [t('bb.s5.inc.3songs'), t('bb.s5.inc.fullProduction'), t('bb.s5.inc.proMix'), t('bb.s5.inc.mastering')],
       notIncluded: [],
     },
+    // Remote packages
+    {
+      id: 'mixing-only',
+      labelKey: 'bb.s5.mixOnly',
+      descKey: 'bb.s5.mixOnly.desc',
+      price: 5500,
+      includes: [t('bb.s5.inc.proMix'), t('bb.s5.inc.stemDelivery'), t('bb.s5.inc.revisions2')],
+      notIncluded: [t('bb.s5.exc.mastering'), t('bb.s5.exc.production')],
+    },
+    {
+      id: 'mastering-only',
+      labelKey: 'bb.s5.masterOnly',
+      descKey: 'bb.s5.masterOnly.desc',
+      price: 1500,
+      includes: [t('bb.s5.inc.digitalMaster')],
+      notIncluded: [t('bb.s5.exc.fullMix'), t('bb.s5.exc.production')],
+    },
+    {
+      id: 'mix-and-master',
+      labelKey: 'bb.s5.mixMaster',
+      descKey: 'bb.s5.mixMaster.desc',
+      price: 6500,
+      includes: [t('bb.s5.inc.mixAndMaster'), t('bb.s5.inc.revisions2'), t('bb.s5.inc.delivery10')],
+      notIncluded: [t('bb.s5.exc.production')],
+    },
+    {
+      id: 'production-support',
+      labelKey: 'bb.s5.prodSupport',
+      descKey: 'bb.s5.prodSupport.desc',
+      price: 12000,
+      includes: [t('bb.s5.inc.arrangement'), t('bb.s5.inc.soundDesign'), t('bb.s5.inc.delivery14')],
+      notIncluded: [t('bb.s5.exc.mastering')],
+    },
   ];
+
+  // Filter by work mode using flags from RESULT_PACKAGES config
+  const packages = allPackages.filter(pkg => {
+    const config = RESULT_PACKAGES.find(rp => rp.id === pkg.id);
+    if (!config) return false;
+    if (isRemote && config.studioOnly) return false;
+    if (!isRemote && config.remoteOnly) return false;
+    return true;
+  });
 
   return (
     <div className="space-y-4">
@@ -63,14 +119,14 @@ const ResultPackageStep = ({ state, dispatch, isRemote }: Props) => {
       <p className="text-muted-foreground/70 font-sans text-xs italic mb-6">{t('bb.s5.explain')} {t('bb.s5.includesNote')}</p>
 
       <div className="grid gap-4">
-        {packages.filter(pkg => !(isRemote && pkg.id === 'session-only')).map(pkg => {
+        {packages.map(pkg => {
           const isSelected = state.resultPackage === pkg.id;
           return (
             <SelectableCard
               key={pkg.id}
               selected={isSelected}
               onClick={() => dispatch({ type: 'SET_RESULT_PACKAGE', id: pkg.id })}
-              badge={pkg.id === 'radio-ready' ? t('bb.badge.bestValue') : undefined}
+              badge={pkg.id === 'radio-ready' ? t('bb.badge.bestValue') : pkg.id === 'mix-and-master' ? t('bb.badge.bestValue') : undefined}
             >
               <div className="flex justify-between items-start">
                 <p className="font-sans font-medium">{t(pkg.labelKey)}</p>
