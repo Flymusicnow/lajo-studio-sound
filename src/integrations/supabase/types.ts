@@ -46,12 +46,14 @@ export type Database = {
           deadline: string | null
           deposit_amount: number
           description: string | null
+          estimated_workload_hours: number | null
           id: string
           mastering_tracks: number | null
           mastering_type: string | null
           mixing_scope: string | null
           payment_choice: string | null
           payment_status: Database["public"]["Enums"]["payment_status"]
+          promo_code: string | null
           reference_url: string | null
           requested_date: string | null
           result_package: string | null
@@ -74,12 +76,14 @@ export type Database = {
           deadline?: string | null
           deposit_amount?: number
           description?: string | null
+          estimated_workload_hours?: number | null
           id?: string
           mastering_tracks?: number | null
           mastering_type?: string | null
           mixing_scope?: string | null
           payment_choice?: string | null
           payment_status?: Database["public"]["Enums"]["payment_status"]
+          promo_code?: string | null
           reference_url?: string | null
           requested_date?: string | null
           result_package?: string | null
@@ -102,12 +106,14 @@ export type Database = {
           deadline?: string | null
           deposit_amount?: number
           description?: string | null
+          estimated_workload_hours?: number | null
           id?: string
           mastering_tracks?: number | null
           mastering_type?: string | null
           mixing_scope?: string | null
           payment_choice?: string | null
           payment_status?: Database["public"]["Enums"]["payment_status"]
+          promo_code?: string | null
           reference_url?: string | null
           requested_date?: string | null
           result_package?: string | null
@@ -341,6 +347,13 @@ export type Database = {
         | "awaiting_payment"
         | "paid"
         | "confirmed"
+        | "awaiting_deposit"
+        | "awaiting_files"
+        | "files_received"
+        | "in_progress"
+        | "ready_for_final_payment"
+        | "final_payment_pending"
+        | "delivered"
       customer_status: "new" | "returning" | "high_value"
       file_status:
         | "not_requested"
@@ -348,7 +361,11 @@ export type Database = {
         | "received"
         | "reviewed"
         | "ready"
-      payment_status: "unpaid" | "deposit_paid" | "fully_paid"
+      payment_status:
+        | "unpaid"
+        | "deposit_paid"
+        | "fully_paid"
+        | "final_payment_pending"
       project_workflow_status:
         | "awaiting_files"
         | "files_received"
@@ -494,6 +511,13 @@ export const Constants = {
         "awaiting_payment",
         "paid",
         "confirmed",
+        "awaiting_deposit",
+        "awaiting_files",
+        "files_received",
+        "in_progress",
+        "ready_for_final_payment",
+        "final_payment_pending",
+        "delivered",
       ],
       customer_status: ["new", "returning", "high_value"],
       file_status: [
@@ -503,7 +527,12 @@ export const Constants = {
         "reviewed",
         "ready",
       ],
-      payment_status: ["unpaid", "deposit_paid", "fully_paid"],
+      payment_status: [
+        "unpaid",
+        "deposit_paid",
+        "fully_paid",
+        "final_payment_pending",
+      ],
       project_workflow_status: [
         "awaiting_files",
         "files_received",
