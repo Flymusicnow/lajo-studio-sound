@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import { format } from 'date-fns';
-import { CalendarIcon, AlertCircle } from 'lucide-react';
+import { useEffect, useState, useMemo } from 'react';
+import { format, addDays } from 'date-fns';
+import { CalendarIcon, AlertCircle, Tag } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Input } from '@/components/ui/input';
@@ -10,6 +10,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import SelectableCard from './SelectableCard';
 import { cn } from '@/lib/utils';
+import { calculateWorkloadHours, calculateMinDeadlineDays } from './bookingConfig';
 import type { BookingState, BookingAction } from './bookingConfig';
 
 interface Props {
@@ -23,6 +24,10 @@ const DetailsStep = ({ state, dispatch }: Props) => {
   const [blockedDates, setBlockedDates] = useState<Date[]>([]);
   const [slotCap, setSlotCap] = useState(7);
   const [bookedThisMonth, setBookedThisMonth] = useState(0);
+
+  const workloadHours = useMemo(() => calculateWorkloadHours(state), [state.session, state.addOns, state.mastering, state.masteringTracks]);
+  const minDeadlineDays = useMemo(() => calculateMinDeadlineDays(workloadHours), [workloadHours]);
+  const minDeadlineDate = useMemo(() => addDays(new Date(), minDeadlineDays), [minDeadlineDays]);
 
   useEffect(() => {
     const fetchAvailability = async () => {
@@ -46,7 +51,8 @@ const DetailsStep = ({ state, dispatch }: Props) => {
   }, []);
 
   const isDateBlocked = (date: Date) => {
-    return date < new Date() || blockedDates.some(bd => 
+    if (date < minDeadlineDate) return true;
+    return blockedDates.some(bd => 
       bd.getFullYear() === date.getFullYear() && bd.getMonth() === date.getMonth() && bd.getDate() === date.getDate()
     );
   };
@@ -72,24 +78,24 @@ const DetailsStep = ({ state, dispatch }: Props) => {
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className="block text-sm font-sans text-muted-foreground mb-1">{t('bb.s7.songs')}</label>
-            <Input value={state.songCount} onChange={e => setField('songCount', e.target.value)} className="bg-input border-border" />
+            <Input value={state.songCount} onChange={e => setField('songCount', e.target.value)} className="bg-input border-border h-12" />
           </div>
           <div>
             <label className="block text-sm font-sans text-muted-foreground mb-1">{t('bb.s7.tracks')}</label>
-            <Input value={state.trackCount} onChange={e => setField('trackCount', e.target.value)} className="bg-input border-border" />
+            <Input value={state.trackCount} onChange={e => setField('trackCount', e.target.value)} className="bg-input border-border h-12" />
           </div>
         </div>
 
         <div>
           <label className="block text-sm font-sans text-muted-foreground mb-1">{t('bb.s7.reference')}</label>
-          <Input value={state.referenceUrl} onChange={e => setField('referenceUrl', e.target.value)} placeholder="https://..." className="bg-input border-border" />
+          <Input value={state.referenceUrl} onChange={e => setField('referenceUrl', e.target.value)} placeholder="https://..." className="bg-input border-border h-12" />
         </div>
 
         <div>
           <label className="block text-sm font-sans text-muted-foreground mb-1">{t('bb.s7.deadline')}</label>
           <Popover>
             <PopoverTrigger asChild>
-              <Button variant="outline" className={cn('w-full justify-start text-left font-normal bg-input border-border', !state.deadline && 'text-muted-foreground')}>
+              <Button variant="outline" className={cn('w-full justify-start text-left font-normal bg-input border-border h-12', !state.deadline && 'text-muted-foreground')}>
                 <CalendarIcon className="mr-2 h-4 w-4" />
                 {state.deadline ? format(state.deadline, 'PPP') : t('bb.s7.pickDate')}
               </Button>
@@ -98,6 +104,12 @@ const DetailsStep = ({ state, dispatch }: Props) => {
               <Calendar mode="single" selected={state.deadline} onSelect={d => setField('deadline', d)} disabled={isDateBlocked} className="p-3 pointer-events-auto" />
             </PopoverContent>
           </Popover>
+          <p className="text-xs text-muted-foreground mt-1.5 font-sans">
+            {language === 'sv' 
+              ? `Baserat på ditt projekt, tidigaste leverans: ${format(minDeadlineDate, 'PPP')}`
+              : `Based on your project, earliest delivery: ${format(minDeadlineDate, 'PPP')}`
+            }
+          </p>
         </div>
 
         <div>
@@ -128,15 +140,29 @@ const DetailsStep = ({ state, dispatch }: Props) => {
         <p className="text-sm font-sans text-muted-foreground font-medium uppercase tracking-wider">{t('bb.s7.contact')}</p>
         <div>
           <label className="block text-sm font-sans text-muted-foreground mb-1">{t('booking.name')} *</label>
-          <Input value={state.name} onChange={e => setField('name', e.target.value)} className="bg-input border-border" required />
+          <Input value={state.name} onChange={e => setField('name', e.target.value)} className="bg-input border-border h-12" required />
         </div>
         <div>
           <label className="block text-sm font-sans text-muted-foreground mb-1">{t('booking.email')} *</label>
-          <Input type="email" value={state.email} onChange={e => setField('email', e.target.value)} className="bg-input border-border" required />
+          <Input type="email" value={state.email} onChange={e => setField('email', e.target.value)} className="bg-input border-border h-12" required />
         </div>
         <div>
           <label className="block text-sm font-sans text-muted-foreground mb-1">{t('booking.phone')}</label>
-          <Input type="tel" value={state.phone} onChange={e => setField('phone', e.target.value)} className="bg-input border-border" />
+          <Input type="tel" value={state.phone} onChange={e => setField('phone', e.target.value)} className="bg-input border-border h-12" />
+        </div>
+      </div>
+
+      {/* Promo code */}
+      <div className="space-y-2">
+        <p className="text-sm font-sans text-muted-foreground font-medium uppercase tracking-wider">{t('bb.s7.promo')}</p>
+        <div className="relative">
+          <Tag className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            value={state.promoCode}
+            onChange={e => setField('promoCode', e.target.value.toUpperCase())}
+            placeholder={t('bb.s7.promo.placeholder')}
+            className="bg-input border-border h-12 pl-10 uppercase tracking-wider"
+          />
         </div>
       </div>
 

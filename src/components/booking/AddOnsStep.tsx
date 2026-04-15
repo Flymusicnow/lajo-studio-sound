@@ -1,5 +1,6 @@
 import { useLanguage } from '@/contexts/LanguageContext';
 import SelectableCard from './SelectableCard';
+import { Clock } from 'lucide-react';
 import { ADDONS } from './bookingConfig';
 import type { BookingState, BookingAction } from './bookingConfig';
 
@@ -34,7 +35,14 @@ const AddOnsStep = ({ state, dispatch }: Props) => {
               onClick={() => dispatch({ type: 'TOGGLE_ADDON', id: addon.id })}
             >
               <div className="flex justify-between items-center">
-                <p className="font-sans text-sm font-medium">{info.label}</p>
+                <div className="flex items-center gap-2">
+                  <p className="font-sans text-sm font-medium">{info.label}</p>
+                  {addon.estimatedHours > 0 && (
+                    <span className="inline-flex items-center gap-1 text-xs font-sans text-muted-foreground/70 bg-secondary/50 px-1.5 py-0.5 rounded">
+                      <Clock size={10} /> +{addon.estimatedHours}h
+                    </span>
+                  )}
+                </div>
                 <p className="text-primary font-sans text-sm font-semibold">{info.price}</p>
               </div>
             </SelectableCard>
