@@ -44,7 +44,7 @@ const Pricing = () => {
       if (pkg === 'premium') total = 1350;
       if (pkg === 'highend') total = 2500;
     } else if (service === 'recording') {
-      if (pkg === 'basic') total = 3000;
+      if (pkg === 'basic') total = 3200;
       if (pkg === 'premium') total = 5500;
       if (pkg === 'highend') total = 10000;
     } else if (service === 'production') {
@@ -203,7 +203,7 @@ const Pricing = () => {
             <PricingTable
               title={t('pricing.recording.title')}
               items={[
-                { label: t('pricing.halfday'), price: '3 000 SEK' },
+                { label: t('pricing.halfday'), price: '3 200 SEK' },
                 { label: t('pricing.fullday'), price: '5 000–6 000 SEK' },
                 { label: t('pricing.weekend'), price: `${t('pricing.from')} 10 000 SEK` },
               ]}
