@@ -612,7 +612,7 @@ const translations: Record<Language, Record<string, string>> = {
     'entry.simple.1': 'Test your idea in the studio',
     'entry.simple.2': 'Get guidance right away',
     'entry.simple.3': 'Take the first real step',
-    'entry.simple.from': 'From 4 500 SEK',
+    'entry.simple.from': 'From 3 200 SEK',
     'entry.simple.cta': 'Start here',
     'entry.build.title': 'Build your song',
     'entry.build.desc': 'For you who want to create something that lasts.',
