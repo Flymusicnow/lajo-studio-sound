@@ -15,9 +15,10 @@ const ThreeWays = () => {
         t('ways.studio.fit3'),
         t('ways.studio.fit4'),
       ],
+      baseRate: '950 kr / h',
       pricing: [
-        { label: '4h', price: '3 200 kr' },
-        { label: '8h', price: '5 900 kr' },
+        { label: '4h', price: '3 200 kr', save: 'Spara 600 kr' },
+        { label: '8h', price: '5 900 kr', save: 'Spara 1 700 kr', badge: 'Bäst värde' },
       ],
       includes: [
         t('ways.studio.inc1'),
@@ -106,11 +107,27 @@ const ThreeWays = () => {
               )}
 
               {s.pricing && (
-                <div className="mb-6 space-y-2">
+                <div className="mb-6 space-y-3">
+                  {'baseRate' in s && s.baseRate && (
+                    <div className="flex justify-between items-center text-sm font-sans pb-2 border-b border-border">
+                      <span className="text-muted-foreground">Löpande</span>
+                      <span className="text-muted-foreground">{s.baseRate}</span>
+                    </div>
+                  )}
                   {s.pricing.map((p, j) => (
                     <div key={j} className="flex justify-between items-center text-sm font-sans">
-                      <span className="text-muted-foreground">{p.label}</span>
-                      <span className="text-foreground font-medium">{p.price}</span>
+                      <div>
+                        <span className="text-foreground font-medium">{p.label}</span>
+                        {'save' in p && p.save && (
+                          <span className="ml-2 text-xs text-primary font-sans">{p.save}</span>
+                        )}
+                        {'badge' in p && p.badge && (
+                          <span className="ml-2 text-xs bg-primary/10 text-primary px-1.5 py-0.5 rounded font-sans">
+                            {p.badge}
+                          </span>
+                        )}
+                      </div>
+                      <span className="text-foreground font-semibold">{p.price}</span>
                     </div>
                   ))}
                 </div>
