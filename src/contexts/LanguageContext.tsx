@@ -237,7 +237,7 @@ const translations: Record<Language, Record<string, string>> = {
 
     // Quick Booking
     'qb.label': 'Snabbbokning',
-    'qb.title': 'Quick Studio Booking',
+    'qb.title': 'Snabb studiobookning',
     'qb.subtitle': 'Snabbbokning för artister som redan vet vad de behöver och bara vill ha studiotid.',
     'qb.step1': '1. Välj session',
     'qb.step2': '2. Välj datum',
@@ -258,7 +258,7 @@ const translations: Record<Language, Record<string, string>> = {
     'entry.simple.1': 'Testa din idé i studion',
     'entry.simple.2': 'Få vägledning direkt',
     'entry.simple.3': 'Ta första steget på riktigt',
-    'entry.simple.from': 'Från 4 500 SEK',
+    'entry.simple.from': 'Från 3 200 SEK',
     'entry.simple.cta': 'Starta här',
     'entry.build.title': 'Bygg din låt',
     'entry.build.desc': 'För dig som vill skapa något som håller.',
@@ -612,7 +612,7 @@ const translations: Record<Language, Record<string, string>> = {
     'entry.simple.1': 'Test your idea in the studio',
     'entry.simple.2': 'Get guidance right away',
     'entry.simple.3': 'Take the first real step',
-    'entry.simple.from': 'From 4 500 SEK',
+    'entry.simple.from': 'From 3 200 SEK',
     'entry.simple.cta': 'Start here',
     'entry.build.title': 'Build your song',
     'entry.build.desc': 'For you who want to create something that lasts.',

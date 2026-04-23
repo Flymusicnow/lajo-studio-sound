@@ -20,7 +20,7 @@ import ReviewStep from '@/components/booking/ReviewStep';
 import PriceSummary from '@/components/booking/PriceSummary';
 import BookingConfirmation from '@/components/booking/BookingConfirmation';
 
-const TOTAL_STEPS = 9;
+const TOTAL_STEPS = 5;
 
 const Booking = () => {
   const { t, language } = useLanguage();
@@ -42,20 +42,13 @@ const Booking = () => {
   const total = calculateTotal(state);
   const deposit = Math.round(total / 2);
 
-  // For remote, step 2 (session) is skipped
-  const getEffectiveStep = () => state.step;
-
   const canProceed = (): boolean => {
     switch (state.step) {
       case 1: return !!state.workMode;
-      case 2: return isRemote ? true : !!state.session; // auto-skip for remote
+      case 2: return isRemote ? true : !!state.session;
       case 3: return state.creativeTypes.length > 0;
-      case 4: return true; // add-ons optional
-      case 5: return true; // mastering optional
-      case 6: return !!state.resultPackage;
-      case 7: return !!state.mixingScope;
-      case 8: return !!state.name && !!state.email;
-      case 9: return true;
+      case 4: return !!state.resultPackage;
+      case 5: return !!state.name && !!state.email;
       default: return false;
     }
   };
@@ -188,16 +181,38 @@ const Booking = () => {
 
   const renderStep = () => {
     switch (state.step) {
-      case 1: return <WorkModeStep state={state} dispatch={dispatch} />;
-      case 2: return <SessionStep state={state} dispatch={dispatch} />;
-      case 3: return <CreativeTypeStep state={state} dispatch={dispatch} />;
-      case 4: return <AddOnsStep state={state} dispatch={dispatch} />;
-      case 5: return <MasteringStep state={state} dispatch={dispatch} />;
-      case 6: return <ResultPackageStep state={state} dispatch={dispatch} isRemote={isRemote} />;
-      case 7: return <MixingScopeStep state={state} dispatch={dispatch} />;
-      case 8: return <DetailsStep state={state} dispatch={dispatch} />;
-      case 9: return <ReviewStep state={state} />;
-      default: return null;
+      case 1:
+        return <WorkModeStep state={state} dispatch={dispatch} />;
+      case 2:
+        return <SessionStep state={state} dispatch={dispatch} />;
+      case 3:
+        return (
+          <div className="space-y-10">
+            <CreativeTypeStep state={state} dispatch={dispatch} />
+            <div className="border-t border-border" />
+            <AddOnsStep state={state} dispatch={dispatch} />
+            <div className="border-t border-border" />
+            <MasteringStep state={state} dispatch={dispatch} />
+          </div>
+        );
+      case 4:
+        return (
+          <div className="space-y-10">
+            <ResultPackageStep state={state} dispatch={dispatch} isRemote={isRemote} />
+            <div className="border-t border-border" />
+            <MixingScopeStep state={state} dispatch={dispatch} />
+          </div>
+        );
+      case 5:
+        return (
+          <div className="space-y-10">
+            <DetailsStep state={state} dispatch={dispatch} />
+            <div className="border-t border-border" />
+            <ReviewStep state={state} />
+          </div>
+        );
+      default:
+        return null;
     }
   };
 
@@ -218,7 +233,6 @@ const Booking = () => {
             <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
               <div>
                 <StepIndicator currentStep={state.step} totalSteps={TOTAL_STEPS} onStepClick={(step) => {
-                  // Prevent navigating to session step if remote
                   if (step === 2 && isRemote) return;
                   dispatch({ type: 'SET_STEP', step });
                 }} />
@@ -238,17 +252,22 @@ const Booking = () => {
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   ) : (
-                    <Button onClick={handleSubmit} disabled={isLoading || !state.name || !state.email} className="bg-primary text-primary-foreground hover:bg-primary/90 gold-glow px-8">
-                      {isLoading ? (
-                        <><Loader2 className="mr-2 h-4 w-4 animate-spin" />{t('bb.nav.sending')}</>
-                      ) : (
-                        t('bb.nav.submit')
-                      )}
-                    </Button>
+                    <div className="flex flex-col items-end gap-2">
+                      <Button onClick={handleSubmit} disabled={isLoading || !state.name || !state.email} className="bg-primary text-primary-foreground hover:bg-primary/90 gold-glow px-8">
+                        {isLoading ? (
+                          <><Loader2 className="mr-2 h-4 w-4 animate-spin" />{t('bb.nav.sending')}</>
+                        ) : (
+                          t('bb.nav.submit')
+                        )}
+                      </Button>
+                      <p className="text-xs font-sans text-muted-foreground text-right">
+                        Vi återkommer inom 24 timmar för att bekräfta din bokning.
+                      </p>
+                    </div>
                   )}
                 </div>
 
-                {state.step >= 7 && state.step < 9 && (
+                {state.step === 4 && (
                   <p className="text-center text-sm font-sans text-muted-foreground mt-4">
                     ✨ {t('bb.nudge.almost')}
                   </p>
@@ -266,7 +285,11 @@ const Booking = () => {
               <div className="flex justify-between items-center">
                 <div>
                   <p className="text-xs text-muted-foreground font-sans">{t('bb.price.total')}</p>
-                  <p className="text-primary font-sans text-xl font-bold transition-all duration-300">{total.toLocaleString()} SEK</p>
+                  {total > 0 ? (
+                    <p className="text-primary font-sans text-xl font-bold transition-all duration-300">{total.toLocaleString()} SEK</p>
+                  ) : (
+                    <p className="text-sm font-sans text-muted-foreground">Välj alternativ ovan</p>
+                  )}
                 </div>
                 {total > 0 && (
                   <div className="text-right">
