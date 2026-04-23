@@ -8,7 +8,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const STUDIO_EMAIL = "lajomou@gmail.com";
+const STUDIO_EMAIL = "info@toplinerproduction.se";
 
 const handler = async (req: Request): Promise<Response> => {
   if (req.method === "OPTIONS") {

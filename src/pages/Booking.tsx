@@ -196,17 +196,13 @@ const Booking = () => {
           </div>
         );
       case 4:
-        return (
-          <div className="space-y-10">
-            <ResultPackageStep state={state} dispatch={dispatch} isRemote={isRemote} />
-            <div className="border-t border-border" />
-            <MixingScopeStep state={state} dispatch={dispatch} />
-          </div>
-        );
+        return <ResultPackageStep state={state} dispatch={dispatch} isRemote={isRemote} />;
       case 5:
         return (
           <div className="space-y-10">
             <DetailsStep state={state} dispatch={dispatch} />
+            <div className="border-t border-border" />
+            <MixingScopeStep state={state} dispatch={dispatch} />
             <div className="border-t border-border" />
             <ReviewStep state={state} />
           </div>

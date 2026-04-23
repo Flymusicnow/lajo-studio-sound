@@ -16,7 +16,6 @@ const ThreeWays = () => {
         t('ways.studio.fit4'),
       ],
       pricing: [
-        { label: '', price: '950 kr / h' },
         { label: '4h', price: '3 200 kr' },
         { label: '8h', price: '5 900 kr' },
       ],
