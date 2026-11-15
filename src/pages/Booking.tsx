@@ -9,12 +9,8 @@ import { useToast } from '@/hooks/use-toast';
 import { bookingReducer, initialBookingState, calculateTotal, calculateWorkloadHours, SESSIONS, ADDONS, RESULT_PACKAGES, MASTERING_PRICE_PER_TRACK } from '@/components/booking/bookingConfig';
 import StepIndicator from '@/components/booking/StepIndicator';
 import WorkModeStep from '@/components/booking/WorkModeStep';
-import SessionStep from '@/components/booking/SessionStep';
 import CreativeTypeStep from '@/components/booking/CreativeTypeStep';
-import AddOnsStep from '@/components/booking/AddOnsStep';
-import MasteringStep from '@/components/booking/MasteringStep';
-import ResultPackageStep from '@/components/booking/ResultPackageStep';
-import MixingScopeStep from '@/components/booking/MixingScopeStep';
+import PackageExtrasStep from '@/components/booking/PackageExtrasStep';
 import DetailsStep from '@/components/booking/DetailsStep';
 import ReviewStep from '@/components/booking/ReviewStep';
 import PriceSummary from '@/components/booking/PriceSummary';
@@ -30,50 +26,42 @@ const Booking = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Pre-select remote from URL param
   useEffect(() => {
     if (searchParams.get('mode') === 'remote' && !state.workMode) {
       dispatch({ type: 'SET_WORK_MODE', workMode: 'remote' });
+      dispatch({ type: 'SET_SESSION', session: 'remote' });
     }
   }, [searchParams]);
 
   const isRemote = state.workMode === 'remote';
-
   const total = calculateTotal(state);
   const deposit = Math.round(total / 2);
 
   const canProceed = (): boolean => {
     switch (state.step) {
       case 1: return !!state.workMode;
-      case 2: return isRemote ? true : !!state.session;
-      case 3: return state.creativeTypes.length > 0;
-      case 4: return !!state.resultPackage;
-      case 5: return !!state.name && !!state.email;
+      case 2: return state.creativeTypes.length > 0;
+      case 3: return !!state.resultPackage && (isRemote || !!state.session) && !!state.mixingScope;
+      case 4: return !!state.name && !!state.email;
+      case 5: return true;
       default: return false;
     }
   };
 
   const next = () => {
     if (state.step < TOTAL_STEPS && canProceed()) {
-      let nextStep = state.step + 1;
-      // Skip session step for remote
-      if (nextStep === 2 && isRemote) {
+      // Ensure remote session id is set when leaving step 1
+      if (state.step === 1 && isRemote && state.session !== 'remote') {
         dispatch({ type: 'SET_SESSION', session: 'remote' });
-        nextStep = 3;
       }
-      dispatch({ type: 'SET_STEP', step: nextStep });
+      dispatch({ type: 'SET_STEP', step: state.step + 1 });
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
   const prev = () => {
     if (state.step > 1) {
-      let prevStep = state.step - 1;
-      // Skip session step for remote
-      if (prevStep === 2 && isRemote) {
-        prevStep = 1;
-      }
-      dispatch({ type: 'SET_STEP', step: prevStep });
+      dispatch({ type: 'SET_STEP', step: state.step - 1 });
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
@@ -90,10 +78,7 @@ const Booking = () => {
 
       let customerId: string | null = null;
       const { data: existingCustomer } = await supabase
-        .from('customers')
-        .select('id')
-        .eq('email', state.email)
-        .maybeSingle();
+        .from('customers').select('id').eq('email', state.email).maybeSingle();
 
       if (existingCustomer) {
         customerId = existingCustomer.id;
@@ -101,8 +86,7 @@ const Booking = () => {
         const { data: newCustomer } = await supabase
           .from('customers')
           .insert({ name: state.name, email: state.email, phone: state.phone || null })
-          .select('id')
-          .single();
+          .select('id').single();
         if (newCustomer) customerId = newCustomer.id;
       }
 
@@ -181,38 +165,12 @@ const Booking = () => {
 
   const renderStep = () => {
     switch (state.step) {
-      case 1:
-        return <WorkModeStep state={state} dispatch={dispatch} />;
-      case 2:
-        return <SessionStep state={state} dispatch={dispatch} />;
-      case 3:
-        return (
-          <div className="space-y-10">
-            <CreativeTypeStep state={state} dispatch={dispatch} />
-            <div className="border-t border-border" />
-            <AddOnsStep state={state} dispatch={dispatch} />
-            <div className="border-t border-border" />
-            <MasteringStep state={state} dispatch={dispatch} />
-          </div>
-        );
-      case 4:
-        return (
-          <div className="space-y-10">
-            <ResultPackageStep state={state} dispatch={dispatch} isRemote={isRemote} />
-            <div className="border-t border-border" />
-            <MixingScopeStep state={state} dispatch={dispatch} />
-          </div>
-        );
-      case 5:
-        return (
-          <div className="space-y-10">
-            <DetailsStep state={state} dispatch={dispatch} />
-            <div className="border-t border-border" />
-            <ReviewStep state={state} />
-          </div>
-        );
-      default:
-        return null;
+      case 1: return <WorkModeStep state={state} dispatch={dispatch} />;
+      case 2: return <CreativeTypeStep state={state} dispatch={dispatch} />;
+      case 3: return <PackageExtrasStep state={state} dispatch={dispatch} isRemote={isRemote} />;
+      case 4: return <DetailsStep state={state} dispatch={dispatch} />;
+      case 5: return <ReviewStep state={state} />;
+      default: return null;
     }
   };
 
@@ -232,10 +190,11 @@ const Booking = () => {
           <div className="max-w-5xl mx-auto">
             <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
               <div>
-                <StepIndicator currentStep={state.step} totalSteps={TOTAL_STEPS} onStepClick={(step) => {
-                  if (step === 2 && isRemote) return;
-                  dispatch({ type: 'SET_STEP', step });
-                }} />
+                <StepIndicator
+                  currentStep={state.step}
+                  totalSteps={TOTAL_STEPS}
+                  onStepClick={(step) => dispatch({ type: 'SET_STEP', step })}
+                />
                 <div className="bg-card border border-border rounded p-6 md:p-8">
                   {renderStep()}
                 </div>
@@ -252,18 +211,13 @@ const Booking = () => {
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   ) : (
-                    <div className="flex flex-col items-end gap-2">
-                      <Button onClick={handleSubmit} disabled={isLoading || !state.name || !state.email} className="bg-primary text-primary-foreground hover:bg-primary/90 gold-glow px-8">
-                        {isLoading ? (
-                          <><Loader2 className="mr-2 h-4 w-4 animate-spin" />{t('bb.nav.sending')}</>
-                        ) : (
-                          t('bb.nav.submit')
-                        )}
-                      </Button>
-                      <p className="text-xs font-sans text-muted-foreground text-right">
-                        Vi återkommer inom 24 timmar för att bekräfta din bokning.
-                      </p>
-                    </div>
+                    <Button onClick={handleSubmit} disabled={isLoading || !state.name || !state.email} className="bg-primary text-primary-foreground hover:bg-primary/90 gold-glow px-8">
+                      {isLoading ? (
+                        <><Loader2 className="mr-2 h-4 w-4 animate-spin" />{t('bb.nav.sending')}</>
+                      ) : (
+                        t('bb.nav.submit')
+                      )}
+                    </Button>
                   )}
                 </div>
 
@@ -285,11 +239,7 @@ const Booking = () => {
               <div className="flex justify-between items-center">
                 <div>
                   <p className="text-xs text-muted-foreground font-sans">{t('bb.price.total')}</p>
-                  {total > 0 ? (
-                    <p className="text-primary font-sans text-xl font-bold transition-all duration-300">{total.toLocaleString()} SEK</p>
-                  ) : (
-                    <p className="text-sm font-sans text-muted-foreground">Välj alternativ ovan</p>
-                  )}
+                  <p className="text-primary font-sans text-xl font-bold transition-all duration-300">{total.toLocaleString()} SEK</p>
                 </div>
                 {total > 0 && (
                   <div className="text-right">

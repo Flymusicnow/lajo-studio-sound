@@ -373,6 +373,21 @@ const translations: Record<Language, Record<string, string>> = {
     'pricing.fullday': 'Heldag (8h)',
     'pricing.weekend': 'Helg',
     'pricing.exclusive': 'Exklusiv beat/produktion',
+    // Pricing v2
+    'pricing.subtitle2': 'Tydliga priser för både studio- och remote-projekt.',
+    'pricing.tab.studio': 'I studion',
+    'pricing.tab.remote': 'Remote',
+    'pricing.sessions.title': 'Studiosessioner',
+    'pricing.packages.studio': 'Studiopaket',
+    'pricing.packages.remote': 'Remote-paket',
+    'pricing.onRequest': 'På förfrågan',
+    'pricing.includedInSession': 'Ingår i sessionen',
+    'pricing.addons.title': 'Tillägg',
+    'pricing.cta': 'Starta din bokning',
+    'pricing.depositNote': '50% förskott vid bokning. Resterande före leverans.',
+    // Booking extras (combined step)
+    'bb.extras.title': 'Tillägg & mastering (valfritt)',
+    'bb.extras.sub': 'Lägg till extra tjänster om du vill.',
   },
   en: {
     // Navigation
@@ -727,6 +742,21 @@ const translations: Record<Language, Record<string, string>> = {
     'pricing.fullday': 'Full-day (8h)',
     'pricing.weekend': 'Weekend',
     'pricing.exclusive': 'Exclusive beat/production',
+    // Pricing v2
+    'pricing.subtitle2': 'Clear pricing for both studio and remote projects.',
+    'pricing.tab.studio': 'In studio',
+    'pricing.tab.remote': 'Remote',
+    'pricing.sessions.title': 'Studio sessions',
+    'pricing.packages.studio': 'Studio packages',
+    'pricing.packages.remote': 'Remote packages',
+    'pricing.onRequest': 'On request',
+    'pricing.includedInSession': 'Included in session',
+    'pricing.addons.title': 'Add-ons',
+    'pricing.cta': 'Start your booking',
+    'pricing.depositNote': '50% deposit at booking. Remainder before delivery.',
+    // Booking extras (combined step)
+    'bb.extras.title': 'Add-ons & mastering (optional)',
+    'bb.extras.sub': 'Add extra services if you want.',
   },
 };
 
