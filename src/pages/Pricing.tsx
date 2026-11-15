@@ -1,412 +1,204 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Check, X, Mic, Globe } from 'lucide-react';
+import { RESULT_PACKAGES, ADDONS, MASTERING_PRICE_PER_TRACK } from '@/components/booking/bookingConfig';
 
-type ServiceType = 'recording' | 'mixing' | 'mastering' | 'production';
-type PackageType = 'basic' | 'premium' | 'highend' | 'recommend';
-type TrackCount = '0-30' | '31-60' | '61-100' | '100+';
-type DeliveryType = 'standard' | 'priority';
+type Mode = 'studio' | 'remote';
+
+interface PackageRow {
+  id: string;
+  labelKey: string;
+  descKey: string;
+  price: number;
+  includes: string[];
+  notIncluded: string[];
+}
 
 const Pricing = () => {
   const { t } = useLanguage();
-  
-  const [service, setService] = useState<ServiceType>('mixing');
-  const [pkg, setPkg] = useState<PackageType>('basic');
-  const [tracks, setTracks] = useState<TrackCount>('0-30');
-  const [delivery, setDelivery] = useState<DeliveryType>('standard');
+  const [mode, setMode] = useState<Mode>('studio');
 
-  const price = useMemo(() => {
-    let total = 0;
-    let isQuote = false;
+  const allPackages: PackageRow[] = [
+    { id: 'session-only', labelKey: 'bb.s5.sessionOnly', descKey: 'bb.s5.sessionOnly.desc', price: 0,
+      includes: ['bb.s5.inc.recording', 'bb.s5.inc.basicMix', 'bb.s5.inc.fileExport'],
+      notIncluded: ['bb.s5.exc.fullMix', 'bb.s5.exc.mastering', 'bb.s5.exc.production'] },
+    { id: 'record-your-song', labelKey: 'bb.s5.record', descKey: 'bb.s5.record.desc', price: 8900,
+      includes: ['bb.s5.inc.recording', 'bb.s5.inc.demoMix', 'bb.s5.inc.delivery5'],
+      notIncluded: ['bb.s5.exc.mastering', 'bb.s5.exc.fullProduction'] },
+    { id: 'radio-ready', labelKey: 'bb.s5.radio', descKey: 'bb.s5.radio.desc', price: 18000,
+      includes: ['bb.s5.inc.fullProduction', 'bb.s5.inc.proMix', 'bb.s5.inc.mastering', 'bb.s5.inc.delivery14'],
+      notIncluded: [] },
+    { id: 'ep-package', labelKey: 'bb.s5.ep', descKey: 'bb.s5.ep.desc', price: 45000,
+      includes: ['bb.s5.inc.3songs', 'bb.s5.inc.fullProduction', 'bb.s5.inc.proMix', 'bb.s5.inc.mastering'],
+      notIncluded: [] },
+    { id: 'mixing-only', labelKey: 'bb.s5.mixOnly', descKey: 'bb.s5.mixOnly.desc', price: 5500,
+      includes: ['bb.s5.inc.proMix', 'bb.s5.inc.stemDelivery', 'bb.s5.inc.revisions2'],
+      notIncluded: ['bb.s5.exc.mastering', 'bb.s5.exc.production'] },
+    { id: 'mastering-only', labelKey: 'bb.s5.masterOnly', descKey: 'bb.s5.masterOnly.desc', price: 1500,
+      includes: ['bb.s5.inc.digitalMaster'],
+      notIncluded: ['bb.s5.exc.fullMix', 'bb.s5.exc.production'] },
+    { id: 'mix-and-master', labelKey: 'bb.s5.mixMaster', descKey: 'bb.s5.mixMaster.desc', price: 6500,
+      includes: ['bb.s5.inc.mixAndMaster', 'bb.s5.inc.revisions2', 'bb.s5.inc.delivery10'],
+      notIncluded: ['bb.s5.exc.production'] },
+    { id: 'production-support', labelKey: 'bb.s5.prodSupport', descKey: 'bb.s5.prodSupport.desc', price: 12000,
+      includes: ['bb.s5.inc.arrangement', 'bb.s5.inc.soundDesign', 'bb.s5.inc.delivery14'],
+      notIncluded: ['bb.s5.exc.mastering'] },
+  ];
 
-    if (service === 'mixing') {
-      const trackPrices: Record<TrackCount, number> = {
-        '0-30': 3000,
-        '31-60': 3500,
-        '61-100': 4500,
-        '100+': 12000,
-      };
-      total = trackPrices[tracks];
-      if (tracks === '100+') isQuote = true;
-      if (pkg === 'premium') total += 2000;
-      if (pkg === 'highend') total = 9000;
-    } else if (service === 'mastering') {
-      if (pkg === 'basic') total = 700;
-      if (pkg === 'premium') total = 1350;
-      if (pkg === 'highend') total = 2500;
-    } else if (service === 'recording') {
-      if (pkg === 'basic') total = 3200;
-      if (pkg === 'premium') total = 5500;
-      if (pkg === 'highend') total = 10000;
-    } else if (service === 'production') {
-      if (pkg === 'basic') total = 5000;
-      if (pkg === 'premium') total = 12500;
-      if (pkg === 'highend') total = 40000;
-      isQuote = true;
-    }
+  const visible = allPackages.filter(p => {
+    const config = RESULT_PACKAGES.find(rp => rp.id === p.id);
+    if (!config) return false;
+    if (mode === 'remote' && config.studioOnly) return false;
+    if (mode === 'studio' && config.remoteOnly) return false;
+    return true;
+  });
 
-    if (delivery === 'priority') {
-      if (service === 'mixing') total += 1000;
-      if (service === 'mastering') total += 300;
-    }
+  const addonLabelKey = (id: string) =>
+    `bb.s3.${id === 'sound-design' ? 'sound' : id === 'extra-revision' ? 'revision' : id}`;
 
-    return { total, isQuote };
-  }, [service, pkg, tracks, delivery]);
+  const bookingHref = mode === 'remote' ? '/booking?mode=remote' : '/booking';
 
   return (
     <Layout>
       <section className="pt-32 pb-24 md:pb-32">
         <div className="container px-6">
-
           {/* Header */}
-          <div className="max-w-2xl mx-auto text-center mb-16">
-            <h1 className="text-4xl md:text-5xl font-serif font-semibold mb-4">
-              {t('pricing.title')}
-            </h1>
-            <p className="text-muted-foreground font-sans">
-              {t('pricing.subtitle')}
-            </p>
+          <div className="max-w-2xl mx-auto text-center mb-12">
+            <h1 className="text-4xl md:text-5xl font-serif font-semibold mb-4">{t('pricing.title')}</h1>
+            <p className="text-muted-foreground font-sans">{t('pricing.subtitle2')}</p>
             <div className="w-16 h-[1px] bg-primary mx-auto mt-8" />
           </div>
 
-          {/* Configurator */}
-          <div className="max-w-xl mx-auto mb-24">
-            <div className="bg-card border border-border p-8">
-              <h2 className="text-2xl font-serif font-semibold text-center mb-8">
-                {t('pricing.configurator.title')}
-              </h2>
-              <div className="space-y-6">
-                <div>
-                  <label className="block text-sm font-sans text-muted-foreground mb-2">
-                    {t('pricing.service')}
-                  </label>
-                  <Select value={service} onValueChange={(v) => setService(v as ServiceType)}>
-                    <SelectTrigger className="w-full bg-input border-border">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="bg-popover border-border">
-                      <SelectItem value="recording">{t('pricing.service.recording')}</SelectItem>
-                      <SelectItem value="mixing">{t('pricing.service.mixing')}</SelectItem>
-                      <SelectItem value="mastering">{t('pricing.service.mastering')}</SelectItem>
-                      <SelectItem value="production">{t('pricing.service.production')}</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-sans text-muted-foreground mb-2">
-                    {t('pricing.package')}
-                  </label>
-                  <Select value={pkg} onValueChange={(v) => setPkg(v as PackageType)}>
-                    <SelectTrigger className="w-full bg-input border-border">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="bg-popover border-border">
-                      <SelectItem value="basic">{t('pricing.package.basic')}</SelectItem>
-                      <SelectItem value="premium">{t('pricing.package.premium')}</SelectItem>
-                      <SelectItem value="highend">{t('pricing.package.highend')}</SelectItem>
-                      <SelectItem value="recommend">{t('pricing.package.recommend')}</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {service === 'mixing' && (
-                  <div>
-                    <label className="block text-sm font-sans text-muted-foreground mb-2">
-                      {t('pricing.tracks')}
-                    </label>
-                    <Select value={tracks} onValueChange={(v) => setTracks(v as TrackCount)}>
-                      <SelectTrigger className="w-full bg-input border-border">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent className="bg-popover border-border">
-                        <SelectItem value="0-30">{t('pricing.tracks.0-30')}</SelectItem>
-                        <SelectItem value="31-60">{t('pricing.tracks.31-60')}</SelectItem>
-                        <SelectItem value="61-100">{t('pricing.tracks.61-100')}</SelectItem>
-                        <SelectItem value="100+">{t('pricing.tracks.100+')}</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                )}
-
-                {(service === 'mixing' || service === 'mastering') && (
-                  <div>
-                    <label className="block text-sm font-sans text-muted-foreground mb-2">
-                      {t('pricing.delivery')}
-                    </label>
-                    <Select value={delivery} onValueChange={(v) => setDelivery(v as DeliveryType)}>
-                      <SelectTrigger className="w-full bg-input border-border">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent className="bg-popover border-border">
-                        <SelectItem value="standard">{t('pricing.delivery.standard')}</SelectItem>
-                        <SelectItem value="priority">{t('pricing.delivery.priority')}</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                )}
-
-                <div className="pt-6 border-t border-border">
-                  <div className="flex items-baseline justify-between mb-6">
-                    <span className="text-sm text-muted-foreground font-sans">
-                      {t('pricing.total')}
-                    </span>
-                    <div className="text-right">
-                      {price.isQuote && (
-                        <span className="text-sm text-muted-foreground mr-2">{t('pricing.from')}</span>
-                      )}
-                      <span className="text-3xl font-serif font-semibold text-primary">
-                        {price.total.toLocaleString()} SEK
-                      </span>
-                    </div>
-                  </div>
-                  <Button
-                    asChild
-                    className="w-full bg-primary text-primary-foreground hover:bg-primary/90 gold-glow py-6 font-sans tracking-wide"
-                  >
-                    <Link to="/booking">{t('pricing.book')}</Link>
-                  </Button>
-                </div>
-              </div>
+          {/* Mode toggle */}
+          <div className="max-w-md mx-auto mb-12">
+            <div className="grid grid-cols-2 bg-card border border-border rounded p-1">
+              <button
+                onClick={() => setMode('studio')}
+                className={`flex items-center justify-center gap-2 py-3 px-4 rounded text-sm font-sans font-medium transition-all ${
+                  mode === 'studio' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                <Mic size={16} /> {t('pricing.tab.studio')}
+              </button>
+              <button
+                onClick={() => setMode('remote')}
+                className={`flex items-center justify-center gap-2 py-3 px-4 rounded text-sm font-sans font-medium transition-all ${
+                  mode === 'remote' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                <Globe size={16} /> {t('pricing.tab.remote')}
+              </button>
             </div>
           </div>
 
-          {/* Standard Pricing Tables */}
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-24">
-            <PricingTable
-              title={t('pricing.mixing.title')}
-              items={[
-                { label: '0–30 ' + t('pricing.tracks').toLowerCase(), price: '3 000 SEK', note: `3 ${t('pricing.revisions')}` },
-                { label: '31–60 ' + t('pricing.tracks').toLowerCase(), price: '3 500 SEK', note: `3 ${t('pricing.revisions')}` },
-                { label: '61–100 ' + t('pricing.tracks').toLowerCase(), price: '4 500 SEK', note: `3 ${t('pricing.revisions')}` },
-                { label: 'Premium Mix', price: '+2 000 SEK', note: `5 ${t('pricing.revisions')}` },
-                { label: 'High-End Mix', price: '8 000–10 000 SEK', note: t('pricing.unlimited') },
-              ]}
-            />
-            <PricingTable
-              title={t('pricing.mastering.title')}
-              items={[
-                { label: t('pricing.stereo'), price: '600–800 SEK' },
-                { label: t('pricing.hybrid'), price: '1 200–1 500 SEK' },
-                { label: t('pricing.stem'), price: '2 500 SEK' },
-              ]}
-            />
-            <PricingTable
-              title={t('pricing.recording.title')}
-              items={[
-                { label: t('pricing.halfday'), price: '3 200 SEK' },
-                { label: t('pricing.fullday'), price: '5 000–6 000 SEK' },
-                { label: t('pricing.weekend'), price: `${t('pricing.from')} 10 000 SEK` },
-              ]}
-            />
-            <PricingTable
-              title={t('pricing.production.title')}
-              items={[
-                { label: t('pricing.exclusive'), price: '5 000–20 000 SEK' },
-                { label: 'High-End', price: '20 000–60 000 SEK' },
-              ]}
-            />
-          </div>
-
-          {/* ── NEW: Beat Licensing Section ── */}
-          <div className="max-w-4xl mx-auto mb-24">
-            <div className="text-center mb-10">
-              <h2 className="text-3xl font-serif font-semibold mb-3">Beat Licensing</h2>
-              <div className="w-16 h-[1px] bg-primary mx-auto mt-4 mb-4" />
-              <p className="text-muted-foreground font-sans text-sm max-w-xl mx-auto">
-                Alla beats skapas av Topliner Production. Du köper en licens att använda beatet — 
-                inte upphovsrätten. Producentens STIM-andel (50%) kvarstår alltid.
-              </p>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-4 mb-8">
-              {/* Non-exclusive */}
-              <div className="border border-border p-6">
-                <div className="text-xs font-sans tracking-widest text-muted-foreground uppercase mb-3">
-                  Non-Exklusiv
+          {/* Studio: session pricing */}
+          {mode === 'studio' && (
+            <div className="max-w-4xl mx-auto mb-12">
+              <h2 className="text-xl font-serif font-semibold mb-4 text-center">{t('pricing.sessions.title')}</h2>
+              <div className="grid sm:grid-cols-3 gap-4">
+                <div className="border border-border p-6 text-center bg-card">
+                  <p className="font-sans font-medium mb-2">{t('bb.s1.4h')}</p>
+                  <p className="text-primary font-serif text-2xl font-semibold">4 500 SEK</p>
                 </div>
-                <div className="text-3xl font-serif font-semibold text-primary mb-4">
-                  1 500 SEK
+                <div className="border border-primary p-6 text-center bg-card relative">
+                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-xs px-2 py-0.5 rounded font-sans">
+                    {t('bb.badge.popular')}
+                  </span>
+                  <p className="font-sans font-medium mb-2">{t('bb.s1.8h')}</p>
+                  <p className="text-primary font-serif text-2xl font-semibold">8 500 SEK</p>
                 </div>
-                <div className="space-y-2 text-sm font-sans text-muted-foreground">
-                  <p>✓ Kommersiell användning tillåten</p>
-                  <p>✓ Streaming på alla plattformar</p>
-                  <p>✓ Upp till 100 000 streams</p>
-                  <p>✓ Kredit till Topliner Production krävs</p>
-                  <p className="opacity-40">✗ Beatet kan säljas till fler artister</p>
-                  <p className="opacity-40">✗ Ingen TV / film / synk-rätt</p>
-                </div>
-              </div>
-
-              {/* Exclusive */}
-              <div className="border border-primary p-6 relative">
-                <div className="absolute top-0 left-0 right-0 h-[2px] bg-primary" />
-                <div className="text-xs font-sans tracking-widest text-primary uppercase mb-3">
-                  Exklusiv
-                </div>
-                <div className="text-3xl font-serif font-semibold text-primary mb-4">
-                  från 5 000 SEK
-                </div>
-                <div className="space-y-2 text-sm font-sans text-muted-foreground">
-                  <p>✓ Du är enda användaren av beatet</p>
-                  <p>✓ Obegränsat streaming</p>
-                  <p>✓ TV, film, reklam & synk</p>
-                  <p>✓ Beatet säljs inte till någon annan</p>
-                  <p>✓ Kredit rekommenderas men ej krav</p>
-                  <p>✓ Pris varierar per beat</p>
+                <div className="border border-border p-6 text-center bg-card">
+                  <p className="font-sans font-medium mb-2">{t('bb.s1.custom')}</p>
+                  <p className="text-muted-foreground font-sans text-sm">{t('pricing.onRequest')}</p>
                 </div>
               </div>
             </div>
+          )}
 
-            {/* Rights note */}
-            <div className="border border-border p-6 bg-card">
-              <h3 className="font-serif font-semibold mb-3 text-lg">Dina rättigheter som köpare</h3>
-              <div className="grid md:grid-cols-2 gap-6 text-sm font-sans text-muted-foreground">
-                <div>
-                  <p className="text-foreground font-medium mb-1">Ekonomiska rättigheter</p>
-                  <p>Regleras av licensen — non-exklusiv eller exklusiv. Bestämmer vem som får använda beatet kommersiellt.</p>
+          {/* Package comparison */}
+          <div className="max-w-5xl mx-auto mb-16">
+            <h2 className="text-xl font-serif font-semibold mb-6 text-center">
+              {mode === 'studio' ? t('pricing.packages.studio') : t('pricing.packages.remote')}
+            </h2>
+            <div className="grid md:grid-cols-2 gap-5">
+              {visible.map(p => (
+                <div key={p.id} className="border border-border p-6 bg-card flex flex-col">
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="font-serif text-lg font-semibold">{t(p.labelKey)}</h3>
+                    {p.price > 0 ? (
+                      <p className="text-primary font-serif text-xl font-semibold ml-3 shrink-0">
+                        {p.price.toLocaleString()} SEK
+                      </p>
+                    ) : (
+                      <p className="text-muted-foreground font-sans text-sm ml-3 shrink-0">
+                        {t('pricing.includedInSession')}
+                      </p>
+                    )}
+                  </div>
+                  <p className="text-muted-foreground font-sans text-sm mb-4">{t(p.descKey)}</p>
+
+                  <ul className="space-y-1.5 mb-3">
+                    {p.includes.map((key, i) => (
+                      <li key={i} className="flex items-center gap-2 text-sm font-sans text-muted-foreground">
+                        <Check size={14} className="text-primary shrink-0" /> {t(key)}
+                      </li>
+                    ))}
+                  </ul>
+                  {p.notIncluded.length > 0 && (
+                    <ul className="space-y-1.5 mb-4">
+                      {p.notIncluded.map((key, i) => (
+                        <li key={i} className="flex items-center gap-2 text-sm font-sans text-muted-foreground/50">
+                          <X size={14} className="shrink-0" /> {t(key)}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+
+                  <div className="mt-auto pt-4">
+                    <Button asChild variant="outline" className="w-full border-border">
+                      <Link to={bookingHref}>{t('pricing.book')}</Link>
+                    </Button>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-foreground font-medium mb-1">Ideell rätt</p>
-                  <p>Tillhör alltid producenten. Oavsett vilken licens du köper har producenten rätt att stå med som upphovsperson på låten.</p>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
 
-          {/* ── NEW: Complete Package ── */}
-          <div className="max-w-4xl mx-auto mb-24">
-            <div className="text-center mb-10">
-              <h2 className="text-3xl font-serif font-semibold mb-3">Komplett Paket</h2>
-              <div className="w-16 h-[1px] bg-primary mx-auto mt-4 mb-4" />
-              <p className="text-muted-foreground font-sans text-sm max-w-xl mx-auto">
-                Beat, inspelning, mix och mastering under ett tak. Allt du behöver för en färdig låt.
-              </p>
-            </div>
-
-            <div className="border border-primary p-8 relative">
-              <div className="absolute top-0 left-0 right-0 h-[2px] bg-primary" />
-              <div className="absolute top-4 right-6">
-                <span className="text-xs font-sans tracking-widest text-primary uppercase border border-primary px-3 py-1">
-                  Mest populärt
+          {/* Add-ons */}
+          <div className="max-w-3xl mx-auto mb-12">
+            <h2 className="text-xl font-serif font-semibold mb-4 text-center">{t('pricing.addons.title')}</h2>
+            <div className="border border-border bg-card divide-y divide-border">
+              {ADDONS.map(addon => (
+                <div key={addon.id} className="flex justify-between items-center p-4">
+                  <span className="font-sans text-sm">{t(addonLabelKey(addon.id))}</span>
+                  <span className="font-sans text-sm text-primary font-medium">
+                    {addon.price.toLocaleString()} SEK
+                  </span>
+                </div>
+              ))}
+              <div className="flex justify-between items-center p-4">
+                <span className="font-sans text-sm">{t('bb.s4.perTrack')}</span>
+                <span className="font-sans text-sm text-primary font-medium">
+                  {MASTERING_PRICE_PER_TRACK.toLocaleString()} SEK / {t('bb.s4.track')}
                 </span>
               </div>
-
-              <div className="grid md:grid-cols-2 gap-8 items-center">
-                <div>
-                  <h3 className="text-2xl font-serif font-semibold mb-4">Per låt — allt inkluderat</h3>
-                  <div className="space-y-2 text-sm font-sans text-muted-foreground mb-6">
-                    <p>→ Skräddarsydd beat (exklusiv)</p>
-                    <p>→ Inspelning upp till 4 timmar</p>
-                    <p>→ Professionell mix</p>
-                    <p>→ Mastering för streaming</p>
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    * Familje- och samarbetsrabatter ges från fall till fall. Kontakta oss.
-                  </p>
-                </div>
-                <div className="text-center md:text-right">
-                  <div className="text-5xl font-serif font-semibold text-primary mb-2">
-                    8 000 SEK
-                  </div>
-                  <div className="text-sm text-muted-foreground font-sans mb-6">per låt</div>
-                  <div className="text-sm text-muted-foreground font-sans border-t border-border pt-4">
-                    4 låtar/månad:{' '}
-                    <span className="text-primary font-semibold text-lg font-serif">32 000 SEK</span>
-                    <br />
-                    <span className="text-xs">Kontakta oss för månadsavtal</span>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
 
-          {/* ── NEW: Revenue Split / Collaboration Deal ── */}
-          <div className="max-w-4xl mx-auto mb-16">
-            <div className="text-center mb-10">
-              <h2 className="text-3xl font-serif font-semibold mb-3">Samarbetsavtal</h2>
-              <div className="w-16 h-[1px] bg-primary mx-auto mt-4 mb-4" />
-            </div>
-
-            <div className="border border-border p-8 bg-card">
-              <div className="grid md:grid-cols-3 gap-8 mb-8">
-                <div className="text-center">
-                  <div className="text-4xl font-serif font-semibold text-primary mb-2">50%</div>
-                  <div className="text-sm font-sans text-muted-foreground">Producent (Topliner)</div>
-                  <div className="text-xs text-muted-foreground mt-1">Komposition / Beat</div>
-                </div>
-                <div className="text-center border-x border-border">
-                  <div className="text-4xl font-serif font-semibold text-primary mb-2">50%</div>
-                  <div className="text-sm font-sans text-muted-foreground">Artist</div>
-                  <div className="text-xs text-muted-foreground mt-1">Text / Framförande</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-4xl font-serif font-semibold text-primary mb-2">∞</div>
-                  <div className="text-sm font-sans text-muted-foreground">Båda parter</div>
-                  <div className="text-xs text-muted-foreground mt-1">STIM-ersättning</div>
-                </div>
-              </div>
-
-              <div className="border-t border-border pt-6 text-sm font-sans text-muted-foreground space-y-2">
-                <p>
-                  För utvalda samarbeten erbjuder Topliner Production reducerat upfront-pris mot en 
-                  50/50-split på all intäkt — streaming, synk och framträdanden.
-                </p>
-                <p>
-                  Detta är branschstandard: producenten äger 50% av kompositionen, 
-                  artisten äger 50% via texten. Alla avtal tecknas skriftligt per låt.
-                </p>
-              </div>
-
-              <div className="mt-6">
-                <Button
-                  asChild
-                  variant="outline"
-                  className="border-primary text-primary hover:bg-primary/10 font-sans tracking-wide"
-                >
-                  <Link to="/booking">Kontakta oss för samarbetsavtal</Link>
-                </Button>
-              </div>
-            </div>
+          {/* CTA */}
+          <div className="max-w-md mx-auto text-center">
+            <Button asChild className="w-full bg-primary text-primary-foreground hover:bg-primary/90 gold-glow py-6">
+              <Link to={bookingHref}>{t('pricing.cta')}</Link>
+            </Button>
+            <p className="text-xs text-muted-foreground mt-3 font-sans">{t('pricing.depositNote')}</p>
           </div>
-
         </div>
       </section>
     </Layout>
   );
 };
-
-interface PricingTableProps {
-  title: string;
-  items: { label: string; price: string; note?: string }[];
-}
-
-const PricingTable = ({ title, items }: PricingTableProps) => (
-  <div className="border border-border p-6">
-    <h3 className="text-xl font-serif font-semibold mb-6 text-center">{title}</h3>
-    <div className="space-y-4">
-      {items.map((item, index) => (
-        <div key={index} className="flex justify-between items-baseline">
-          <div>
-            <span className="text-sm font-sans">{item.label}</span>
-            {item.note && (
-              <span className="block text-xs text-muted-foreground mt-0.5">{item.note}</span>
-            )}
-          </div>
-          <span className="text-sm font-sans text-primary">{item.price}</span>
-        </div>
-      ))}
-    </div>
-  </div>
-);
 
 export default Pricing;
